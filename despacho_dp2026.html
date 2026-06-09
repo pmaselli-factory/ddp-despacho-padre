@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Despachos · Día del Padre 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --bg:        #f5f4f0;
+  --white:     #ffffff;
+  --border:    #e2e0d8;
+  --border2:   #d4d2c8;
+  --surface:   #f0efeb;
+  --surface2:  #e8e7e2;
+  --green:     #1a7a5e;
+  --green-bg:  #edf7f3;
+  --green-mid: #c8eadf;
+  --text:      #1a1a18;
+  --text2:     #5a5a54;
+  --text3:     #9a9a92;
+  --red:       #c0392b;
+  --red-bg:    #fdf0ef;
+  --amber:     #b45309;
+  --amber-bg:  #fef9ee;
+  --blue:      #1d5fa3;
+  --blue-bg:   #eff6ff;
+  --badge-a-bg:#dbeafe; --badge-a-fg:#1d4ed8;
+  --badge-b-bg:#d1fae5; --badge-b-fg:#065f46;
+  --badge-c-bg:#fef3c7; --badge-c-fg:#92400e;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'IBM Plex Sans', sans-serif;
+  --radius:    4px;
+  --shadow:    0 1px 3px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px;min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:var(--white);border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:220px 1fr 220px;align-items:center;
+  padding:0 24px;height:52px;
+}
+.brand{font-family:var(--sans);font-weight:600;font-size:13px;
+  letter-spacing:.12em;color:var(--text);white-space:nowrap}
+.nav-tabs{display:flex;justify-content:center;gap:0;height:100%}
+.nav-tab{
+  display:flex;align-items:center;padding:0 18px;height:100%;
+  font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;
+  white-space:nowrap;user-select:none;
+}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.topbar-right{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+
+/* ── DISPATCH BAR ── */
+.dispatch-bar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;padding:8px 24px;flex-wrap:wrap;
+}
+.d-label{font-size:11px;color:var(--text3);font-weight:500;margin-right:4px;font-family:var(--mono)}
+.d-btn{
+  display:flex;flex-direction:column;align-items:flex-start;
+  padding:6px 14px;border-radius:var(--radius);cursor:pointer;
+  border:1px solid var(--border);background:var(--white);
+  font-family:var(--sans);transition:all .15s;min-width:120px;
+}
+.d-btn:hover{border-color:var(--green);background:var(--green-bg)}
+.d-btn.active{border-color:var(--green);background:var(--green-bg)}
+.d-btn-name{font-size:12px;font-weight:600;color:var(--text)}
+.d-btn.active .d-btn-name{color:var(--green)}
+.d-btn-sub{font-size:10px;color:var(--text3);margin-top:1px;font-family:var(--mono)}
+.d-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;margin-right:4px;
+}
+.badge-a{background:var(--badge-a-bg);color:var(--badge-a-fg)}
+.badge-b{background:var(--badge-b-bg);color:var(--badge-b-fg)}
+.badge-c{background:var(--badge-c-bg);color:var(--badge-c-fg)}
+.d-btn.confirmed .d-btn-name::after{content:' ✓';color:var(--green);font-size:11px}
+.dispatch-spacer{flex:1}
+.dispatch-cov{font-size:11px;color:var(--text3);font-family:var(--mono)}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 24px;background:var(--bg);border-bottom:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.toolbar-group{display:flex;gap:6px;align-items:center}
+.toolbar-sep{width:1px;height:20px;background:var(--border);margin:0 4px}
+
+/* ── BUTTONS ── */
+.btn{
+  padding:5px 14px;border-radius:var(--radius);cursor:pointer;
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  border:1px solid var(--border2);background:var(--white);color:var(--text);
+  transition:all .15s;white-space:nowrap;line-height:1.5;
+}
+.btn:hover{border-color:var(--text2);color:var(--text)}
+.btn-primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn-primary:hover{background:#15664f;border-color:#15664f;color:#fff}
+.btn-danger{border-color:#e0b4b0;color:var(--red)}
+.btn-danger:hover{background:var(--red-bg);border-color:var(--red)}
+.btn-success{border-color:var(--green-mid);color:var(--green)}
+.btn-success:hover{background:var(--green-bg);border-color:var(--green)}
+.btn-sm{padding:4px 10px;font-size:11px}
+.day-btn.active{background:var(--green);border-color:var(--green);color:#fff}
+label.btn{cursor:pointer}
+input[type=file]{display:none}
+
+/* ── LAYOUT ── */
+.page{display:none}
+.page.active{display:block}
+.table-scroll{overflow:auto;max-height:calc(100vh - 178px)}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead{position:sticky;top:0;z-index:10}
+thead tr:first-child th{background:var(--surface);border-bottom:1px solid var(--border)}
+thead tr:last-child th{background:var(--surface);border-bottom:2px solid var(--border2)}
+
+th{
+  padding:6px 8px;text-align:right;border-right:1px solid var(--border);
+  font-family:var(--mono);font-weight:500;color:var(--text2);
+  white-space:nowrap;font-size:11px;
+}
+th.th-prod{text-align:left;min-width:200px;position:sticky;left:0;z-index:6;background:var(--surface)}
+th.th-fam {text-align:left;min-width:130px;position:sticky;left:200px;z-index:6;background:var(--surface)}
+th.th-art {text-align:center;min-width:58px}
+th.th-store{min-width:74px}
+th.th-total{background:var(--green-bg);color:var(--green);font-weight:600}
+th.th-plant{color:var(--blue);background:var(--blue-bg)}
+th.soh-row{background:var(--bg);font-size:10px;color:var(--text3);font-weight:400}
+
+/* Row types */
+tr.row-major td{
+  background:var(--surface2);color:var(--text);font-family:var(--sans);
+  font-weight:600;font-size:11px;padding:6px 12px;letter-spacing:.06em;
+  text-transform:uppercase;border-bottom:1px solid var(--border2);
+}
+tr.row-fam td{
+  background:var(--surface);font-weight:500;padding:5px 8px;
+  border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);
+}
+tr.row-fam td.fam-num{
+  font-family:var(--mono);font-weight:500;color:var(--text);
+  text-align:right;background:var(--surface);
+}
+tr.row-fam td.fam-total-cell{
+  background:var(--green-bg);color:var(--green);font-family:var(--mono);
+  font-weight:600;text-align:right;
+}
+
+tr.row-prod td{border-right:1px solid var(--border);border-bottom:1px solid var(--border);vertical-align:middle}
+tr.row-prod:hover td{background:#f8f7f3!important}
+tr.row-prod:nth-child(odd) td.sticky-col{background:var(--white)}
+tr.row-prod:nth-child(even) td.sticky-col{background:#fafaf8}
+
+td.sticky-prod{
+  position:sticky;left:0;z-index:4;background:inherit;
+  padding:5px 8px 5px 14px;text-align:left;color:var(--text);
+  min-width:200px;
+}
+td.sticky-fam{
+  position:sticky;left:200px;z-index:4;background:inherit;
+  padding:5px 8px;text-align:left;color:var(--text3);
+  font-size:11px;min-width:130px;
+}
+td.td-art{text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px}
+td.td-art.missing{color:var(--amber)}
+
+/* Editable cells */
+td.editable{padding:0;background:transparent}
+td.editable input{
+  width:100%;height:30px;
+  background:transparent;border:none;
+  color:var(--text2);font-family:var(--mono);font-size:12px;
+  text-align:right;padding:0 8px;outline:none;
+  font-variant-numeric:tabular-nums;
+}
+td.editable.has-value{background:var(--green-bg)}
+td.editable.has-value input{color:var(--green);font-weight:500}
+td.editable.modified{background:#fffbeb}
+td.editable.modified input{color:var(--amber)}
+td.editable input:focus{background:var(--green-bg);color:var(--green)}
+td.editable.disabled-cell{background:var(--surface)}
+td.editable.disabled-cell input{color:var(--text3);cursor:not-allowed}
+
+td.td-total{
+  text-align:right;font-family:var(--mono);font-weight:600;
+  color:var(--green);background:var(--green-bg);padding:0 8px;
+}
+td.td-plant{
+  text-align:right;font-family:var(--mono);color:var(--blue);
+  background:var(--blue-bg);padding:0 8px;font-size:11px;
+}
+td.td-plant.low{color:var(--amber);background:var(--amber-bg)}
+td.td-plant.empty{color:var(--text3);background:transparent}
+
+/* Grand total row */
+tr.row-grand td{
+  background:var(--surface2);border-top:2px solid var(--border2);
+  font-family:var(--mono);font-weight:600;color:var(--green);
+  text-align:right;padding:6px 8px;
+}
+tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left:14px}
+
+/* ── SUMMARY PAGES ── */
+.page-wrap{padding:20px 24px;overflow:auto;max-height:calc(100vh - 110px)}
+.page-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--text2);margin-bottom:20px}
+.kpi-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 18px;min-width:150px;flex:1}
+.kpi-label{font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:500}
+.kpi-val{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--text)}
+.kpi-val.green{color:var(--green)}
+.kpi-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);
+  margin-bottom:16px;overflow:hidden}
+.card-head{padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);
+  font-weight:600;font-size:12px;color:var(--text)}
+.card-body{padding:0;overflow:auto}
+
+.mini-table{width:100%;border-collapse:collapse;font-size:12px}
+.mini-table th{background:var(--surface);border:1px solid var(--border);
+  padding:6px 10px;text-align:right;color:var(--text2);white-space:nowrap;
+  font-family:var(--mono);font-size:11px}
+.mini-table th:first-child{text-align:left;font-family:var(--sans)}
+.mini-table td{border:1px solid var(--border);padding:5px 10px;
+  text-align:right;font-family:var(--mono);color:var(--text)}
+.mini-table td:first-child{text-align:left;font-family:var(--sans);color:var(--text2)}
+.mini-table tr:hover td{background:#fafaf8}
+.mini-table tr.fam-row td{background:var(--surface);font-weight:600;color:var(--text);font-family:var(--sans)}
+.mini-table tr.total-row td{background:var(--green-bg);font-weight:700;color:var(--green);
+  border-top:2px solid var(--border2)}
+.stock-ok{color:var(--green)!important}
+.stock-warn{color:var(--amber)!important}
+.stock-bad{color:var(--red)!important}
+
+/* ── STATUS BAR ── */
+.statusbar{
+  position:fixed;bottom:0;left:0;right:0;height:32px;
+  background:var(--white);border-top:1px solid var(--border);
+  display:flex;gap:0;align-items:stretch;font-size:11px;
+  font-family:var(--mono);z-index:150;
+}
+.st-item{
+  display:flex;align-items:center;gap:6px;padding:0 16px;
+  border-right:1px solid var(--border);color:var(--text3);
+}
+.st-item b{color:var(--text);font-weight:500}
+.st-item.ok b{color:var(--green)}
+.st-item.warn b{color:var(--amber)}
+.st-item.err b{color:var(--red)}
+.st-spacer{flex:1}
+.st-dispatch{color:var(--green);font-weight:600}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:40px;right:20px;
+  background:var(--text);color:var(--white);
+  border-radius:var(--radius);padding:10px 16px;
+  font-size:12px;z-index:300;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .2s,transform .2s;pointer-events:none;
+  max-width:320px;box-shadow:var(--shadow);
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border:1px solid var(--border);border-radius:6px;
+  padding:24px;max-width:440px;width:90%;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.modal h3{font-size:16px;font-weight:600;margin-bottom:10px}
+.modal p{color:var(--text2);font-size:13px;margin-bottom:18px;line-height:1.6}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
+/* ── COVERAGE PILL ── */
+.cov-pill{
+  display:inline-block;font-family:var(--mono);font-size:10px;
+  padding:2px 7px;border-radius:10px;background:var(--green-bg);
+  color:var(--green);font-weight:500;margin-left:8px;
+}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="brand">· FACTORY NINE ·</div>
+  <nav class="nav-tabs" id="navTabs">
+    <div class="nav-tab active" onclick="gotoTab('despacho',this)">Despachos</div>
+    <div class="nav-tab" onclick="gotoTab('est-prod',this)">Estimado × Producto</div>
+  </nav>
+  <div class="topbar-right">
+    <label class="btn btn-sm btn-primary" title="Cargar archivo Stock on Hand (tiendas + planta)">
+      ↑ Cargar SOH
+      <input type="file" accept=".xlsx" onchange="loadSoh(this)">
+    </label>
+  </div>
+</header>
+
+<!-- ══ PAGE: DESPACHO ══ -->
+<div class="page active" id="page-despacho">
+
+  <!-- Dispatch selector -->
+  <div class="dispatch-bar">
+    <span class="d-label">DESPACHO</span>
+    <div class="d-btn active" id="dbtn-vie_am" onclick="selectDispatch('vie_am')">
+      <div class="d-btn-name"><span class="d-badge badge-a">A</span>Viernes AM</div>
+      <div class="d-btn-sub">100% Vie + 80% Sáb → 70%</div>
+    </div>
+    <div class="d-btn" id="dbtn-vie_pm" onclick="selectDispatch('vie_pm')">
+      <div class="d-btn-name"><span class="d-badge badge-b">B</span>Viernes PM</div>
+      <div class="d-btn-sub">100%Vie+100%Sáb+30%Dom → 86%</div>
+    </div>
+    <div class="d-btn" id="dbtn-sat" onclick="selectDispatch('sat')">
+      <div class="d-btn-name"><span class="d-badge badge-c">C</span>Sábado AM</div>
+      <div class="d-btn-sub">100% Sáb + 100% Dom → 100%</div>
+    </div>
+    <div class="dispatch-spacer"></div>
+    <span class="dispatch-cov" id="covInfo">Cobertura: <strong>70%</strong> del fin de semana</span>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <button class="btn btn-primary" onclick="exportExcel().catch(e=>{toast('Error: '+e.message);console.error(e)})">↓ Exportar Excel</button>
+      <button class="btn" onclick="exportCSV()">↓ Exportar CSV</button>
+      <button class="btn" onclick="clearOverrides()">↺ Limpiar ajustes manuales</button>
+    </div>
+    <div class="toolbar-sep"></div>
+    <div class="toolbar-group" style="margin-left:auto">
+      <label style="font-size:11px;color:var(--text3)">Cob. override:</label>
+      <input id="covOverride" type="number" min="0" max="1" step="0.01" placeholder="auto"
+        style="width:64px;padding:4px 7px;border:1px solid var(--border2);border-radius:var(--radius);
+               font-family:var(--mono);font-size:11px;background:var(--white);color:var(--text)">
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-scroll" id="tableScroll">
+    <div style="padding:48px;text-align:center;color:var(--text3)">
+      Cargando datos…
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: ESTIMADO × PRODUCTO ══ -->
+<div class="page" id="page-est-prod">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div class="page-title">Estimado de Demanda × Producto × Tienda</div>
+        <div class="page-sub">Distribución 30% Vie / 50% Sáb / 20% Dom · basado en Pedido Ajustado</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn day-btn active" id="day-btn-total" onclick="setDay('total',this)">Total</button>
+        <button class="btn day-btn" id="day-btn-fri" onclick="setDay('fri',this)">Viernes</button>
+        <button class="btn day-btn" id="day-btn-sat" onclick="setDay('sat',this)">Sábado</button>
+        <button class="btn day-btn" id="day-btn-dom" onclick="setDay('dom',this)">Domingo</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head" id="estProdHead">Total fin de semana por tienda</div>
+      <div class="card-body" id="estProdTable"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="st-item"><span>DESPACHO</span>&nbsp;<b class="st-dispatch" id="st-did">Vie AM</b></div>
+  <div class="st-item" id="st-units">Unidades: <b>—</b></div>
+  <div class="st-item" id="st-prod">Productos: <b>59</b></div>
+  <div class="st-item" id="st-store-stock">Stock tiendas: <b>Sin cargar</b></div>
+  <div class="st-item" id="st-plant-stock">Stock planta: <b>Sin cargar</b></div>
+  <div class="st-spacer"></div>
+  <div class="st-item">Día del Padre 2026 · Vie 19 / Sáb 20 / Dom 21 Jun</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+
+<script>
+// ════════════════════════════════════════════════
+// CONSTANTS
+// ════════════════════════════════════════════════
+const STORES = ["Chicureo","La Florida","La Reina","Lastarria","Los Militares","Luis Pasteur","Maipu","Nunoa","Penalolen","Pocuro","Providencia","San Miguel","Tabancura"];
+const AM_ONLY = ["Chicureo","Maipu"];
+const DISPATCH_ORDER = ['vie_am','vie_pm','sat'];
+const DISPATCH_META = {
+  vie_am:{label:'Viernes AM', badge:'A', cov:0.70, desc:'100% Vie + 80% Sáb'},
+  vie_pm:{label:'Viernes PM', badge:'B', cov:0.86, desc:'100%Vie+100%Sáb+30%Dom'},
+  sat:   {label:'Sábado AM',  badge:'C', cov:1.00, desc:'100% Sáb + 100% Dom'},
+};
+const MAJOR = {
+  'Pastel Trozo':['Cheesecake Trozo','Pie Trozo','Torta Trozo','Barras','Brownies','Galletones','Queque Trozo'],
+  'Pastel Mediano':['Cheesecake Mediano','Pie Mediano','Torta Mediana','Queque Entero'],
+  'Pastel Grande':['Cheesecake Grande','Pie Grande','Torta Grande'],
+};
+const FAM2MG={};Object.entries(MAJOR).forEach(([mg,fs])=>fs.forEach(f=>FAM2MG[f]=mg));
+
+const PRODUCTS=[{"name":"Trozo Ch NY Berries","familia":"Cheesecake Trozo","mult":10,"num":22016,"wknd":{"Chicureo":20,"La Florida":80,"La Reina":60,"Lastarria":100,"Los Militares":100,"Luis Pasteur":40,"Maipu":60,"Nunoa":130,"Penalolen":50,"Pocuro":70,"Providencia":80,"San Miguel":80,"Tabancura":80}},{"name":"Trozo Ch NY Maracuya","familia":"Cheesecake Trozo","mult":10,"num":null,"wknd":{"Chicureo":10,"La Florida":50,"La Reina":30,"Lastarria":60,"Los Militares":60,"Luis Pasteur":20,"Maipu":30,"Nunoa":80,"Penalolen":30,"Pocuro":40,"Providencia":50,"San Miguel":50,"Tabancura":50}},{"name":"Trozo Ch Oreo","familia":"Cheesecake Trozo","mult":10,"num":22008,"wknd":{"Chicureo":30,"La Florida":110,"La Reina":70,"Lastarria":130,"Los Militares":130,"Luis Pasteur":50,"Maipu":80,"Nunoa":160,"Penalolen":70,"Pocuro":90,"Providencia":100,"San Miguel":100,"Tabancura":100}},{"name":"Trozo Ch White Raspberry","familia":"Cheesecake Trozo","mult":10,"num":22092,"wknd":{"Chicureo":20,"La Florida":80,"La Reina":60,"Lastarria":100,"Los Militares":100,"Luis Pasteur":40,"Maipu":60,"Nunoa":120,"Penalolen":50,"Pocuro":70,"Providencia":70,"San Miguel":70,"Tabancura":80}},{"name":"Trozo Apple Pie","familia":"Pie Trozo","mult":8,"num":22037,"wknd":{"Chicureo":32,"La Florida":80,"La Reina":64,"Lastarria":88,"Los Militares":104,"Luis Pasteur":32,"Maipu":56,"Nunoa":136,"Penalolen":48,"Pocuro":96,"Providencia":56,"San Miguel":80,"Tabancura":80}},{"name":"Trozo Lemon Pie","familia":"Pie Trozo","mult":8,"num":22039,"wknd":{"Chicureo":40,"La Florida":112,"La Reina":88,"Lastarria":120,"Los Militares":144,"Luis Pasteur":48,"Maipu":72,"Nunoa":184,"Penalolen":72,"Pocuro":128,"Providencia":80,"San Miguel":112,"Tabancura":112}},{"name":"Trozo Nutella Pie","familia":"Pie Trozo","mult":8,"num":22110,"wknd":{"Chicureo":32,"La Florida":88,"La Reina":64,"Lastarria":96,"Los Militares":112,"Luis Pasteur":32,"Maipu":56,"Nunoa":144,"Penalolen":56,"Pocuro":104,"Providencia":64,"San Miguel":88,"Tabancura":88}},{"name":"Trozo Berries & Chocolate Blanco Pie","familia":"Pie Trozo","mult":8,"num":22147,"wknd":{"Chicureo":16,"La Florida":32,"La Reina":24,"Lastarria":32,"Los Militares":40,"Luis Pasteur":16,"Maipu":24,"Nunoa":56,"Penalolen":24,"Pocuro":40,"Providencia":24,"San Miguel":32,"Tabancura":32}},{"name":"Trozo Tor Brownie Man y Framb","familia":"Torta Trozo","mult":10,"num":22050,"wknd":{"Chicureo":40,"La Florida":90,"La Reina":40,"Lastarria":110,"Los Militares":80,"Luis Pasteur":30,"Maipu":60,"Nunoa":110,"Penalolen":50,"Pocuro":60,"Providencia":70,"San Miguel":80,"Tabancura":50}},{"name":"Trozo Tor Carrot Cake","familia":"Torta Trozo","mult":10,"num":22053,"wknd":{"Chicureo":50,"La Florida":140,"La Reina":60,"Lastarria":160,"Los Militares":120,"Luis Pasteur":50,"Maipu":80,"Nunoa":160,"Penalolen":80,"Pocuro":90,"Providencia":110,"San Miguel":120,"Tabancura":80}},{"name":"Trozo Tor Dark Cake","familia":"Torta Trozo","mult":10,"num":22058,"wknd":{"Chicureo":40,"La Florida":110,"La Reina":40,"Lastarria":120,"Los Militares":90,"Luis Pasteur":40,"Maipu":70,"Nunoa":120,"Penalolen":60,"Pocuro":70,"Providencia":80,"San Miguel":100,"Tabancura":60}},{"name":"Trozo Tor Lemon Blueberry Cake","familia":"Torta Trozo","mult":10,"num":22086,"wknd":{"Chicureo":30,"La Florida":70,"La Reina":30,"Lastarria":80,"Los Militares":60,"Luis Pasteur":30,"Maipu":40,"Nunoa":80,"Penalolen":40,"Pocuro":50,"Providencia":60,"San Miguel":70,"Tabancura":40}},{"name":"Trozo Tor Red Velvet","familia":"Torta Trozo","mult":10,"num":22064,"wknd":{"Chicureo":20,"La Florida":60,"La Reina":20,"Lastarria":60,"Los Militares":50,"Luis Pasteur":20,"Maipu":40,"Nunoa":70,"Penalolen":30,"Pocuro":40,"Providencia":40,"San Miguel":60,"Tabancura":30}},{"name":"Trozo Tor S/A Carrot Cake","familia":"Torta Trozo","mult":10,"num":22081,"wknd":{"Chicureo":20,"La Florida":50,"La Reina":20,"Lastarria":50,"Los Militares":40,"Luis Pasteur":20,"Maipu":30,"Nunoa":50,"Penalolen":20,"Pocuro":30,"Providencia":30,"San Miguel":40,"Tabancura":30}},{"name":"Trozo Tor S/A Chocolate","familia":"Torta Trozo","mult":10,"num":22152,"wknd":{"Chicureo":20,"La Florida":60,"La Reina":30,"Lastarria":60,"Los Militares":50,"Luis Pasteur":20,"Maipu":30,"Nunoa":60,"Penalolen":30,"Pocuro":40,"Providencia":40,"San Miguel":50,"Tabancura":30}},{"name":"Oreo Mix Bar","familia":"Barras","mult":5,"num":22117,"wknd":{"Chicureo":5,"La Florida":25,"La Reina":20,"Lastarria":25,"Los Militares":25,"Luis Pasteur":10,"Maipu":15,"Nunoa":30,"Penalolen":15,"Pocuro":20,"Providencia":25,"San Miguel":20,"Tabancura":20}},{"name":"Peanut Butter Bar","familia":"Barras","mult":5,"num":22002,"wknd":{"Chicureo":5,"La Florida":20,"La Reina":15,"Lastarria":20,"Los Militares":20,"Luis Pasteur":10,"Maipu":10,"Nunoa":25,"Penalolen":15,"Pocuro":15,"Providencia":20,"San Miguel":15,"Tabancura":15}},{"name":"Brownie H\u00famedo Tradicional","familia":"Brownies","mult":5,"num":22003,"wknd":{"Chicureo":55,"La Florida":175,"La Reina":120,"Lastarria":215,"Los Militares":265,"Luis Pasteur":90,"Maipu":115,"Nunoa":285,"Penalolen":105,"Pocuro":215,"Providencia":160,"San Miguel":190,"Tabancura":265}},{"name":"Brownie con Dulce Leche","familia":"Brownies","mult":5,"num":22001,"wknd":{"Chicureo":30,"La Florida":115,"La Reina":80,"Lastarria":145,"Los Militares":175,"Luis Pasteur":60,"Maipu":75,"Nunoa":190,"Penalolen":70,"Pocuro":145,"Providencia":105,"San Miguel":125,"Tabancura":175}},{"name":"Lemonie","familia":"Brownies","mult":5,"num":22125,"wknd":{"Chicureo":30,"La Florida":95,"La Reina":65,"Lastarria":120,"Los Militares":145,"Luis Pasteur":50,"Maipu":65,"Nunoa":155,"Penalolen":60,"Pocuro":120,"Providencia":90,"San Miguel":105,"Tabancura":140}},{"name":"Cookie Avena Cranberry","familia":"Galletones","mult":5,"num":22031,"wknd":{"Chicureo":10,"La Florida":25,"La Reina":15,"Lastarria":35,"Los Militares":35,"Luis Pasteur":15,"Maipu":20,"Nunoa":40,"Penalolen":20,"Pocuro":25,"Providencia":30,"San Miguel":25,"Tabancura":25}},{"name":"Cookie Chocolate Chip Walnut","familia":"Galletones","mult":5,"num":22033,"wknd":{"Chicureo":10,"La Florida":30,"La Reina":20,"Lastarria":40,"Los Militares":45,"Luis Pasteur":15,"Maipu":25,"Nunoa":55,"Penalolen":25,"Pocuro":30,"Providencia":35,"San Miguel":30,"Tabancura":30}},{"name":"Cookie Triple Chocolate","familia":"Galletones","mult":5,"num":22034,"wknd":{"Chicureo":10,"La Florida":30,"La Reina":25,"Lastarria":45,"Los Militares":50,"Luis Pasteur":20,"Maipu":25,"Nunoa":60,"Penalolen":25,"Pocuro":35,"Providencia":40,"San Miguel":35,"Tabancura":35}},{"name":"Troz Queque Chocolate","familia":"Queque Trozo","mult":4,"num":22044,"wknd":{"Chicureo":12,"La Florida":32,"La Reina":24,"Lastarria":36,"Los Militares":36,"Luis Pasteur":16,"Maipu":24,"Nunoa":48,"Penalolen":24,"Pocuro":28,"Providencia":32,"San Miguel":32,"Tabancura":32}},{"name":"Troz Queque Zanahoria","familia":"Queque Trozo","mult":4,"num":22045,"wknd":{"Chicureo":8,"La Florida":24,"La Reina":20,"Lastarria":28,"Los Militares":28,"Luis Pasteur":12,"Maipu":20,"Nunoa":40,"Penalolen":20,"Pocuro":24,"Providencia":28,"San Miguel":24,"Tabancura":24}},{"name":"Troz Queque S/A Zanahoria","familia":"Queque Trozo","mult":4,"num":22083,"wknd":{"Chicureo":4,"La Florida":12,"La Reina":8,"Lastarria":16,"Los Militares":12,"Luis Pasteur":4,"Maipu":8,"Nunoa":16,"Penalolen":8,"Pocuro":12,"Providencia":12,"San Miguel":12,"Tabancura":12}},{"name":"Troz Queque Pl\u00e1tano","familia":"Queque Trozo","mult":4,"num":22143,"wknd":{"Chicureo":4,"La Florida":16,"La Reina":12,"Lastarria":20,"Los Militares":16,"Luis Pasteur":8,"Maipu":12,"Nunoa":24,"Penalolen":12,"Pocuro":16,"Providencia":16,"San Miguel":16,"Tabancura":16}},{"name":"Mediano Ch NY Berries","familia":"Cheesecake Mediano","mult":1,"num":null,"wknd":{"Chicureo":2,"La Florida":8,"La Reina":5,"Lastarria":9,"Los Militares":8,"Luis Pasteur":3,"Maipu":5,"Nunoa":11,"Penalolen":5,"Pocuro":6,"Providencia":7,"San Miguel":7,"Tabancura":7}},{"name":"Mediano Ch NY Maracuya","familia":"Cheesecake Mediano","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":5,"La Reina":3,"Lastarria":5,"Los Militares":5,"Luis Pasteur":2,"Maipu":3,"Nunoa":7,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Mediano Ch Oreo","familia":"Cheesecake Mediano","mult":1,"num":22009,"wknd":{"Chicureo":2,"La Florida":9,"La Reina":6,"Lastarria":10,"Los Militares":10,"Luis Pasteur":4,"Maipu":6,"Nunoa":13,"Penalolen":6,"Pocuro":7,"Providencia":8,"San Miguel":8,"Tabancura":8}},{"name":"Mediano Ch White Raspberry","familia":"Cheesecake Mediano","mult":1,"num":22094,"wknd":{"Chicureo":1,"La Florida":5,"La Reina":3,"Lastarria":5,"Los Militares":5,"Luis Pasteur":2,"Maipu":3,"Nunoa":6,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Mediano Nutella Pie","familia":"Pie Mediano","mult":1,"num":22109,"wknd":{"Chicureo":2,"La Florida":7,"La Reina":4,"Lastarria":8,"Los Militares":8,"Luis Pasteur":3,"Maipu":4,"Nunoa":10,"Penalolen":5,"Pocuro":7,"Providencia":5,"San Miguel":7,"Tabancura":6}},{"name":"Mediano Berries & Chocolate Blanco Pie","familia":"Pie Mediano","mult":1,"num":22146,"wknd":{"Chicureo":1,"La Florida":3,"La Reina":2,"Lastarria":3,"Los Militares":3,"Luis Pasteur":1,"Maipu":2,"Nunoa":4,"Penalolen":2,"Pocuro":3,"Providencia":2,"San Miguel":3,"Tabancura":2}},{"name":"Mediana Tor Brownie Man y Framb","familia":"Torta Mediana","mult":1,"num":22051,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":6,"Luis Pasteur":2,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":4,"Providencia":5,"San Miguel":6,"Tabancura":4}},{"name":"Mediana Tor Carrot Cake","familia":"Torta Mediana","mult":1,"num":22054,"wknd":{"Chicureo":5,"La Florida":12,"La Reina":5,"Lastarria":14,"Los Militares":10,"Luis Pasteur":4,"Maipu":7,"Nunoa":14,"Penalolen":7,"Pocuro":7,"Providencia":10,"San Miguel":10,"Tabancura":7}},{"name":"Mediana Tor Dark Cake","familia":"Torta Mediana","mult":1,"num":22059,"wknd":{"Chicureo":4,"La Florida":9,"La Reina":4,"Lastarria":10,"Los Militares":8,"Luis Pasteur":3,"Maipu":6,"Nunoa":10,"Penalolen":5,"Pocuro":6,"Providencia":7,"San Miguel":8,"Tabancura":5}},{"name":"Mediana Tor Lemon Blueberry Cake","familia":"Torta Mediana","mult":1,"num":22088,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":6,"Luis Pasteur":3,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":5,"San Miguel":6,"Tabancura":4}},{"name":"Mediana Tor Red Velvet","familia":"Torta Mediana","mult":1,"num":22065,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":7,"Los Militares":5,"Luis Pasteur":2,"Maipu":4,"Nunoa":7,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":5,"Tabancura":3}},{"name":"Mediana Tor S/A Carrot Cake","familia":"Torta Mediana","mult":1,"num":22080,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Mediana Tor S/A Chocolate","familia":"Torta Mediana","mult":1,"num":22151,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":2,"Pocuro":4,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Ent Queque Chocolate","familia":"Queque Entero","mult":1,"num":22072,"wknd":{"Chicureo":4,"La Florida":6,"La Reina":7,"Lastarria":5,"Los Militares":5,"Luis Pasteur":7,"Maipu":5,"Nunoa":12,"Penalolen":4,"Pocuro":8,"Providencia":5,"San Miguel":4,"Tabancura":10}},{"name":"Ent Queque Zanahoria","familia":"Queque Entero","mult":1,"num":22073,"wknd":{"Chicureo":3,"La Florida":5,"La Reina":5,"Lastarria":4,"Los Militares":4,"Luis Pasteur":5,"Maipu":4,"Nunoa":9,"Penalolen":3,"Pocuro":6,"Providencia":4,"San Miguel":3,"Tabancura":7}},{"name":"Ent Queque S/A Zanahoria","familia":"Queque Entero","mult":1,"num":22084,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":2,"Lastarria":2,"Los Militares":2,"Luis Pasteur":2,"Maipu":2,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":1,"San Miguel":1,"Tabancura":3}},{"name":"Ent Queque Pl\u00e1tano","familia":"Queque Entero","mult":1,"num":22142,"wknd":{"Chicureo":2,"La Florida":3,"La Reina":3,"Lastarria":3,"Los Militares":3,"Luis Pasteur":3,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":4,"Providencia":2,"San Miguel":2,"Tabancura":4}},{"name":"Grande Ch NY Berries","familia":"Cheesecake Grande","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":4,"Luis Pasteur":1,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":3,"Tabancura":3}},{"name":"Grande Ch NY Maracuya","familia":"Cheesecake Grande","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Ch Oreo","familia":"Cheesecake Grande","mult":1,"num":22007,"wknd":{"Chicureo":1,"La Florida":4,"La Reina":3,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":2,"Nunoa":6,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Grande Ch White Raspberry","familia":"Cheesecake Grande","mult":1,"num":22093,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Nutella Pie","familia":"Pie Grande","mult":1,"num":22108,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":3,"Lastarria":6,"Los Militares":6,"Luis Pasteur":2,"Maipu":3,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":4,"San Miguel":5,"Tabancura":5}},{"name":"Grande Pie Apple Crumble","familia":"Pie Grande","mult":1,"num":22036,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":4,"Lastarria":8,"Los Militares":8,"Luis Pasteur":3,"Maipu":4,"Nunoa":10,"Penalolen":5,"Pocuro":7,"Providencia":5,"San Miguel":7,"Tabancura":6}},{"name":"Grande Pie Lemon","familia":"Pie Grande","mult":1,"num":22038,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":3,"Lastarria":6,"Los Militares":6,"Luis Pasteur":2,"Maipu":3,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":4,"San Miguel":5,"Tabancura":5}},{"name":"Grande Berries & Chocolate Blanco Pie","familia":"Pie Grande","mult":1,"num":22145,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":2,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Tor Brownie Man y Framb","familia":"Torta Grande","mult":1,"num":22049,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":5,"Los Militares":3,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":4,"Tabancura":3}},{"name":"Grande Tor Carrot Cake","familia":"Torta Grande","mult":1,"num":22052,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":5,"Luis Pasteur":3,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":4,"Providencia":6,"San Miguel":6,"Tabancura":4}},{"name":"Grande Tor Dark Cake","familia":"Torta Grande","mult":1,"num":22057,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":6,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":6,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":5,"Tabancura":3}},{"name":"Grande Tor Lemon Blueberry Cake","familia":"Torta Grande","mult":1,"num":22087,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Grande Tor Red Velvet","familia":"Torta Grande","mult":1,"num":22063,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Grande Tor S/A Carrot Cake","familia":"Torta Grande","mult":1,"num":22082,"wknd":{"Chicureo":1,"La Florida":3,"La Reina":1,"Lastarria":3,"Los Militares":2,"Luis Pasteur":1,"Maipu":2,"Nunoa":3,"Penalolen":2,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Tor S/A Chocolate","familia":"Torta Grande","mult":1,"num":22150,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":4,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":3,"Tabancura":2}}];
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let currentDispatch = 'vie_am';
+let storeStock = {};   // {prodName:{store:qty}}
+let plantStock = {};   // {prodName:qty}
+let dispatch = {vie_am:{}, vie_pm:{}, sat:{}};
+let overrides = {};
+let constrained = {}; // {did: {prodName: true}} — plant-limited products    // {did:{prod:{store:qty}}}
+
+// ════════════════════════════════════════════════
+// CALC
+// ════════════════════════════════════════════════
+function ceilM(v,m){ return v<=0?0:Math.ceil(v/m)*m; }
+
+function prevDispatched(prod, store, did){
+  let t=0;
+  for(const d of DISPATCH_ORDER){
+    if(d===did) break;
+    t += dispatch[d][prod]?.[store]||0;
+  }
+  return t;
+}
+
+function calcProduct(p, did){
+  const cov = parseFloat(document.getElementById('covOverride').value)||DISPATCH_META[did].cov;
+  const plantAvail = plantStock[p.name] ?? Infinity;
+  const plantConstrained = plantAvail !== Infinity;
+
+  // Step 1: compute raw needs per store
+  const needs = {};
+  let totalNeed = 0;
+  for(const s of STORES){
+    const w   = p.wknd[s] || 0;
+    const soh = storeStock[p.name]?.[s] ?? 0;
+    const prev = prevDispatched(p.name, s, did);
+    needs[s] = Math.max(0, w * cov - soh - prev);
+    totalNeed += needs[s];
+  }
+
+  if(totalNeed === 0) return {result: Object.fromEntries(STORES.map(s=>[s,0])), constrained:false};
+
+  const result = {};
+  const isConstr = plantConstrained && plantAvail < totalNeed;
+
+  if(!isConstr){
+    // No plant constraint — ceil to multiple
+    for(const s of STORES) result[s] = ceilM(needs[s], p.mult);
+  } else {
+    // Plant constrained — 2-pass proportional floor
+    let remaining = Math.floor(plantAvail);
+
+    // Pass 1: proportional floor
+    for(const s of STORES){
+      if(needs[s] <= 0){ result[s]=0; continue; }
+      const raw = needs[s] * (plantAvail / totalNeed);
+      const fl  = Math.floor(raw / p.mult) * p.mult;
+      result[s] = fl;
+      remaining -= fl;
+    }
+
+    // Pass 2: distribute remainder (multiples) to stores with highest unmet need
+    const unmet = STORES
+      .filter(s => needs[s] > 0)
+      .map(s => [s, needs[s] - result[s]])
+      .sort((a,b) => b[1]-a[1]);
+
+    for(const [s] of unmet){
+      if(remaining < p.mult) break;
+      result[s] += p.mult;
+      remaining -= p.mult;
+    }
+  }
+
+  return {result, constrained: isConstr};
+}
+
+
+function calcDispatch(){
+  const did = currentDispatch;
+  dispatch[did]={};
+  if(!constrained[did]) constrained[did]={};
+  else constrained[did]={};
+  for(const p of PRODUCTS){
+    const {result:base, constrained:isConst} = calcProduct(p, did);
+    const ovr = overrides[did]?.[p.name]||{};
+    const final={};
+    for(const s of STORES) final[s] = ovr[s]!==undefined ? ovr[s] : base[s];
+    dispatch[did][p.name]=final;
+    if(isConst) constrained[did][p.name]=true;
+  }
+  renderTable();
+  updateStatus();
+  toast('Recalculado');
+}
+
+// ════════════════════════════════════════════════
+// RENDER TABLE
+// ════════════════════════════════════════════════
+function renderTable(){
+  const did = currentDispatch;
+
+  // family totals
+  const famTot={};
+  for(const p of PRODUCTS){
+    if(!famTot[p.familia]) famTot[p.familia]={};
+    for(const s of STORES) famTot[p.familia][s]=(famTot[p.familia][s]||0)+(dispatch[did][p.name]?.[s]||0);
+  }
+
+  let h = `<table>
+  <thead>
+    <tr>
+      <th class="th-prod" rowspan="2">Producto</th>
+      <th class="th-fam" rowspan="2">Familia</th>
+      <th class="th-art" rowspan="2">Art.#</th>
+      ${STORES.map(s=>`<th class="th-store">${s}</th>`).join('')}
+      <th class="th-total" rowspan="2">TOTAL</th>
+      <th class="th-plant" rowspan="2">Planta</th>
+    </tr>
+    <tr>${STORES.map(s=>`<th class="th-store soh-row">${getSoh(null,s)}</th>`).join('')}</tr>
+  </thead><tbody>`;
+
+  let prevMG=null, prevFam=null;
+  for(const p of PRODUCTS){
+    const mg = FAM2MG[p.familia]||p.familia;
+    if(mg!==prevMG){
+      h+=`<tr class="row-major"><td colspan="${4+STORES.length+1}">${mg}</td></tr>`;
+      prevMG=mg; prevFam=null;
+    }
+    if(p.familia!==prevFam){
+      const ft=famTot[p.familia]||{};
+      const ftTot = STORES.reduce((a,s)=>a+(ft[s]||0),0);
+      h+=`<tr class="row-fam">
+        <td colspan="2" style="padding-left:22px">● ${p.familia}</td>
+        <td></td>
+        ${STORES.map(s=>`<td class="fam-num">${ft[s]||''}</td>`).join('')}
+        <td class="fam-total-cell">${ftTot||''}</td><td></td>
+      </tr>`;
+      prevFam=p.familia;
+    }
+
+    const qty = dispatch[did][p.name]||{};
+    const tot = STORES.reduce((a,s)=>a+(qty[s]||0),0);
+    const pa  = plantStock[p.name];
+    const plantCls = pa===undefined?'empty':pa<tot?'low':'';
+    const artCls   = p.num?'':'missing';
+    const artTxt   = p.num||'⚠ —';
+
+    h+=`<tr class="row-prod" data-pn="${q(p.name)}">
+      <td class="sticky-col sticky-prod">${p.name}</td>
+      <td class="sticky-col sticky-fam">${p.familia}</td>
+      <td class="td-art ${artCls}" title="${p.num?p.num:'Sin número de artículo'}">${artTxt}</td>
+      ${STORES.map(s=>{
+        const v=qty[s]||0;
+        const isAM = false;
+        const isOvr= overrides[did]?.[p.name]?.[s]!==undefined;
+        const sohTip= storeStock[p.name]?.[s]!==undefined?` title="SOH: ${storeStock[p.name][s]}"`:' title="Sin SOH"';
+        const cls=isAM?'disabled-cell':isOvr?'modified':v>0?'has-value':'';
+        return `<td class="editable ${cls}"${sohTip}>
+          <input type="number" min="0" value="${isAM?'':v}"
+            ${isAM?'disabled':''}
+            data-p="${q(p.name)}" data-s="${s}"
+            onchange="onEdit(this,'${did}')"
+            onfocus="this.select()">
+        </td>`;
+      }).join('')}
+      <td class="td-total">${tot||'—'}</td>
+      <td class="td-plant ${plantCls}">${pa!==undefined?pa:'—'}</td>
+    </tr>`;
+  }
+
+  // Grand total
+  const gt={};
+  for(const s of STORES) gt[s]=PRODUCTS.reduce((a,p)=>a+(dispatch[did][p.name]?.[s]||0),0);
+  const gtTot=STORES.reduce((a,s)=>a+(gt[s]||0),0);
+  h+=`<tr class="row-grand">
+    <td colspan="3">TOTAL DESPACHO</td>
+    ${STORES.map(s=>`<td>${gt[s]||''}</td>`).join('')}
+    <td>${gtTot}</td><td></td>
+  </tr>`;
+
+  h+='</tbody></table>';
+  document.getElementById('tableScroll').innerHTML=h;
+  document.getElementById('st-units').innerHTML=`Unidades: <b>${gtTot.toLocaleString('es-CL')}</b>`;
+}
+
+function getSoh(prod,s){
+  if(!prod) return Object.keys(storeStock).length?'SOH':'—';
+  return storeStock[prod]?.[s]??'—';
+}
+function q(s){return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+
+function onEdit(input, did){
+  const prod=input.dataset.p, s=input.dataset.s;
+  const v=Math.max(0,parseInt(input.value)||0);
+  if(!overrides[did])overrides[did]={};
+  if(!overrides[did][prod])overrides[did][prod]={};
+  overrides[did][prod][s]=v;
+  if(!dispatch[did][prod])dispatch[did][prod]={};
+  dispatch[did][prod][s]=v;
+  const td=input.closest('td');
+  td.className='editable '+(v>0?'modified':'');
+  // update row total
+  const tr=input.closest('tr');
+  const inputs=[...tr.querySelectorAll('input:not(:disabled)')];
+  const rowTot=inputs.reduce((a,i)=>a+(parseInt(i.value)||0),0);
+  tr.querySelector('.td-total').textContent=rowTot||'—';
+  updateStatus();
+}
+
+function clearOverrides(){
+  overrides[currentDispatch]={};
+  calcDispatch();
+  toast('Ajustes manuales eliminados');
+}
+
+// ════════════════════════════════════════════════
+// DISPATCH CONTROL
+// ════════════════════════════════════════════════
+function selectDispatch(did){
+  currentDispatch=did;
+  document.querySelectorAll('.d-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dbtn-'+did).classList.add('active');
+  document.getElementById('st-did').textContent=DISPATCH_META[did].label;
+  document.getElementById('covInfo').innerHTML=
+    `Cobertura: <strong>${(DISPATCH_META[did].cov*100).toFixed(0)}%</strong> del fin de semana`;
+  if(Object.keys(dispatch[did]).length) renderTable();
+  else calcDispatch();
+}
+
+
+
+
+
+function renderEstProd(){
+  renderEstProdDay(currentDay||'total');
+}
+
+let currentDay = 'total';
+const DAY_LABELS = {total:'Total fin de semana', fri:'Viernes (30%)', sat:'Sábado (50%)', dom:'Domingo (20%)'};
+const DAY_PCT2 = {total:1, fri:0.30, sat:0.50, dom:0.20};
+
+function setDay(day, el){
+  currentDay = day;
+  document.querySelectorAll('.day-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('estProdHead').textContent = DAY_LABELS[day] + ' — unidades por tienda';
+  renderEstProdDay(day);
+}
+
+function renderEstProdDay(day){
+  const pct = DAY_PCT2[day];
+  let h = `<table class="mini-table"><thead><tr>
+    <th>Producto</th><th>Familia</th>
+    ${STORES.map(s=>`<th>${s}</th>`).join('')}
+    <th>TOTAL</th>
+  </tr></thead><tbody>`;
+
+  let prevFam=null;
+  const famTot={};
+
+  for(const p of PRODUCTS){
+    if(p.familia!==prevFam){
+      if(prevFam){
+        const ft=famTot[prevFam];
+        const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round(ft[s]*pct)||''}</td>`).join('');
+        const ftTot=STORES.reduce((a,s)=>a+Math.round(ft[s]*pct),0);
+        h+=`<tr class="fam-row"><td colspan="2" style="padding-left:14px">● ${prevFam}</td>${ftRow}<td style="font-weight:700;color:var(--green)">${ftTot}</td></tr>`;
+      }
+      famTot[p.familia]={};
+      STORES.forEach(s=>famTot[p.familia][s]=0);
+      prevFam=p.familia;
+    }
+    const tot=STORES.reduce((a,s)=>a+Math.round((p.wknd[s]||0)*pct),0);
+    const cells=STORES.map(s=>{
+      const v=Math.round((p.wknd[s]||0)*pct);
+      famTot[p.familia][s]+=(p.wknd[s]||0);
+      return `<td>${v||''}</td>`;
+    }).join('');
+    h+=`<tr><td style="padding-left:20px">${p.name}</td><td>${p.familia}</td>${cells}<td style="font-weight:600;color:var(--green)">${tot||''}</td></tr>`;
+  }
+  // last family
+  if(prevFam){
+    const ft=famTot[prevFam];
+    const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round(ft[s]*pct)||''}</td>`).join('');
+    const ftTot=STORES.reduce((a,s)=>a+Math.round(ft[s]*pct),0);
+    h+=`<tr class="fam-row"><td colspan="2" style="padding-left:14px">● ${prevFam}</td>${ftRow}<td style="font-weight:700;color:var(--green)">${ftTot}</td></tr>`;
+  }
+
+  // grand total
+  const gt={};
+  STORES.forEach(s=>gt[s]=PRODUCTS.reduce((a,p)=>a+Math.round((p.wknd[s]||0)*pct),0));
+  const gtTot=STORES.reduce((a,s)=>a+gt[s],0);
+  h+=`<tr class="total-row"><td colspan="2">TOTAL</td>${STORES.map(s=>`<td>${gt[s]}</td>`).join('')}<td>${gtTot}</td></tr>`;
+  h+='</tbody></table>';
+  document.getElementById('estProdTable').innerHTML=h;
+}
+
+
+
+
+
+// ════════════════════════════════════════════════
+// FILE LOADING — SheetJS parser
+// ════════════════════════════════════════════════
+
+// Location name -> canonical store name
+const LOC_MAP = {
+    "Chicureo Costos":"Chicureo",
+    "La Florida Costos":"La Florida",
+    "La Reina Costo":"La Reina","La Reina Gasto":"La Reina",
+    "Lastarria Costo":"Lastarria",
+    "Los Militares Costo":"Los Militares","Los Militares Gasto":"Los Militares",
+    "Luis Pasteur Costos":"Luis Pasteur",
+    "Maipu Costos":"Maipu",
+    "Nunoa Costos":"Nunoa","Ñuñoa Costo":"Nunoa","Ñuñoa Costos":"Nunoa",
+    "Penalolen Costo":"Penalolen","Penalolen Costos":"Penalolen",
+    "Pocuro Costo":"Pocuro","Pocuro Costos":"Pocuro",
+    "Providencia Costos":"Providencia","Providencia Costo":"Providencia",
+    "San Miguel Costo":"San Miguel","San Miguel Costos":"San Miguel","San Miguel ":"San Miguel",
+    "Tabancura Costo":"Tabancura","Tabancura Gasto":"Tabancura","Tabancura Costos":"Tabancura",
+    "Bodega Via Lactea":"__planta__"
+  };
+
+// DEC name -> product name (or [name1,name2] for shared DECs ÷2)
+const DEC_MAP = {"DEC TROZ BARRA OREO MIX (PA)":"Oreo Mix Bar","DEC TROZ BARRA PEANUT BUTTER (PA)":"Peanut Butter Bar","DEC TROZ BROWNIE TRADICIONAL (PA)":"Brownie Húmedo Tradicional","DEC TROZ BROWNIE DULCE DE LECHE (PA)":"Brownie con Dulce Leche","DEC TROZ LEMONIE (PA)":"Lemonie","DEC GRD CH NY NEUTRO (PA)":["Grande Ch NY Berries","Grande Ch NY Maracuya"],"DEC GRD CH OREO (PA)":"Grande Ch Oreo","DEC GRD CH WHITE CHOCOLATE RASPBERRY (PA)":"Grande Ch White Raspberry","DEC MED CH NY NEUTRO (PA)":["Mediano Ch NY Berries","Mediano Ch NY Maracuya"],"DEC MED CH OREO (PA)":"Mediano Ch Oreo","DEC MED CH WHITE CHOCOLATE RASPBERRY (PA)":"Mediano Ch White Raspberry","DEC TROZ CH NY NEUTRO (PA)":["Trozo Ch NY Berries","Trozo Ch NY Maracuya"],"DEC TROZ CH OREO (PA)":"Trozo Ch Oreo","DEC TROZ CH WHITE CHOCOLATE RASPBERRY (PA)":"Trozo Ch White Raspberry","DEC COOKIE AVENA CRANBERRY":"Cookie Avena Cranberry","DEC COOKIE CHOCOLATE CHIP WALNUT (PA)":"Cookie Chocolate Chip Walnut","DEC COOKIE TRIPLE CHOCOLATE (PA)":"Cookie Triple Chocolate","DEC GRD PIE NUTELLA (PA)":"Grande Nutella Pie","DEC GRD PIE APPLE CRUMBLE (PA)":"Grande Pie Apple Crumble","DEC GRD PIE LEMON (PA)":"Grande Pie Lemon","DEC MED PIE DE NUTELLA (PA)":"Mediano Nutella Pie","DEC TROZ PIE APPLE CRUMBLE (PA)":"Trozo Apple Pie","DEC TROZ PIE LEMON (PA)":"Trozo Lemon Pie","DEC TROZ PIE DE NUTELLA (PA)":"Trozo Nutella Pie","DEC ENT QUEQUE CHOCOLATE (PA)":"Ent Queque Chocolate","DEC ENT QUEQUE ZANAHORIA (PA)":"Ent Queque Zanahoria","DEC ENT QUEQUE S/A ZANAHORIA (PA)":"Ent Queque S/A Zanahoria","DEC TROZ QUEQUE CHOCOLATE (PA)":"Troz Queque Chocolate","DEC TROZ QUEQUE ZANAHORIA (PA)":"Troz Queque Zanahoria","DEC TROZ QUEQUE S/A ZANAHORIA (PA)":"Troz Queque S/A Zanahoria","DEC GRD TOR BROWNIE MANJAR BLANCO (PA)":"Grande Tor Brownie Man y Framb","DEC GRD TOR CARROT CAKE (PA)":"Grande Tor Carrot Cake","DEC GRD TOR DARK CAKE (PA)":"Grande Tor Dark Cake","DEC GRD TOR LEMON BLUEBERRIES (PA)":"Grande Tor Lemon Blueberry Cake","DEC GRD TOR RED VELVET (PA)":"Grande Tor Red Velvet","DEC GRD S/A TOR CARROT CAKE (PA)":"Grande Tor S/A Carrot Cake","DEC MED TOR BROWNIE MANJAR BLANCO (PA)":"Mediana Tor Brownie Man y Framb","DEC MED TOR CARROT CAKE (PA)":"Mediana Tor Carrot Cake","DEC MED TOR DARK CAKE (PA)":"Mediana Tor Dark Cake","DEC MED TOR LEMON BLUEBERRIES (PA)":"Mediana Tor Lemon Blueberry Cake","DEC MED TOR RED VELVET (PA)":"Mediana Tor Red Velvet","DEC MED S/A TOR CARROT CAKE (PA)":"Mediana Tor S/A Carrot Cake","DEC TROZ TOR BROWNIE MANJAR BLANCO (PA)":"Trozo Tor Brownie Man y Framb","DEC TROZ TOR CARROT CAKE (PA)":"Trozo Tor Carrot Cake","DEC TROZ TOR DARK CAKE (PA)":"Trozo Tor Dark Cake","DEC TROZ TOR LEMON BLUEBERRIES (PA)":"Trozo Tor Lemon Blueberry Cake","DEC TROZ TOR RED VELVET (PA)":"Trozo Tor Red Velvet","DEC TROZ S/A TOR CARROT CAKE (PA)":"Trozo Tor S/A Carrot Cake"};
+
+function parseSohFile(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(e.target.result, {type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:null});
+
+        // Result containers
+        const newStoreStock = {};  // {prodName: {store: qty}}
+        const newPlantStock = {};  // {prodName: qty}
+
+        // Accumulator for stores that appear twice (Costo + Gasto)
+        const storeAcc = {};  // {store: {decName: qty}}
+
+        let currentLoc = null;  // canonical name or '__planta__'
+
+        for (const row of rows) {
+          const c1 = row[0] != null ? String(row[0]).trim() : '';
+          const c2 = row[1] != null ? String(row[1]).trim() : '';
+          const c3 = row[2] != null ? String(row[2]).trim() : '';
+          const c4 = row[3];
+
+          // Location header: only switch context when name is in LOC_MAP
+          // Sub-groups like "Bases recetas", "Productos decorados" are ignored (currentLoc preserved)
+          if (c1 && !c2) {
+            const mapped = LOC_MAP[c1];
+            if (mapped !== undefined) {
+              currentLoc = mapped;  // known location — switch context
+            }
+            // unknown name (sub-group) — do NOT reset currentLoc, just skip
+            continue;
+          }
+
+          // Product row: col1=number, col2=DEC name, col3=Unidad, col4=stock
+          if (c1 && c2 && c3 === 'Unidad' && c4 !== null && currentLoc) {
+            const isNum = !isNaN(parseFloat(c1));
+            if (!isNum) continue;
+            const decName = c2;
+            const qty = Math.floor(parseFloat(c4) || 0);
+            const mapping = DEC_MAP[decName];
+            if (!mapping) continue;
+
+            const prods = Array.isArray(mapping) ? mapping : [mapping];
+            const share = qty / prods.length;  // divide shared DECs equally
+
+            if (currentLoc === '__planta__') {
+              for (const prod of prods) {
+                newPlantStock[prod] = (newPlantStock[prod] || 0) + share;
+              }
+            } else {
+              if (!storeAcc[currentLoc]) storeAcc[currentLoc] = {};
+              for (const prod of prods) {
+                storeAcc[currentLoc][prod] = (storeAcc[currentLoc][prod] || 0) + share;
+              }
+            }
+          }
+        }
+
+        // Finalize store stock (round shared DECs)
+        for (const [store, prods] of Object.entries(storeAcc)) {
+          for (const [prod, qty] of Object.entries(prods)) {
+            if (!newStoreStock[prod]) newStoreStock[prod] = {};
+            newStoreStock[prod][store] = Math.floor(qty);
+          }
+        }
+
+        // Round plant stock
+        for (const prod of Object.keys(newPlantStock)) {
+          newPlantStock[prod] = Math.floor(newPlantStock[prod]);
+        }
+
+        // Debug: count parsed items
+        const storeCount = Object.values(newStoreStock).reduce((a,b)=>a+Object.keys(b).length,0);
+        const plantCount = Object.keys(newPlantStock).length;
+        console.log('SOH parsed:', {storeProds:Object.keys(newStoreStock).length, storeEntries:storeCount, plantProds:plantCount, plantStock:newPlantStock});
+        resolve({storeStock: newStoreStock, plantStock: newPlantStock, filename: file.name});
+      } catch(err) {
+        reject(err);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function loadSoh(input){
+  const f = input.files[0]; if(!f) return;
+  toast(`Procesando ${f.name}...`);
+  parseSohFile(f).then(({storeStock: ss, plantStock: ps, filename}) => {
+    storeStock = ss;
+    plantStock = ps;
+    const storeProds = Object.keys(ss).length;
+    const plantProds = Object.keys(ps).length;
+    document.getElementById('st-store-stock').innerHTML =
+      `Stock tiendas: <b>${storeProds} prods</b>`;
+    document.getElementById('st-plant-stock').innerHTML =
+      `Stock planta: <b>${plantProds} prods</b>`;
+    toast(`✓ ${filename} — ${storeProds} prods tienda · ${plantProds} prods planta`);
+    calcDispatch();
+    input.value='';
+  }).catch(err => {
+    toast(`Error al leer archivo: ${err.message}`);
+    console.error(err);
+    input.value='';
+  });
+}
+
+// ════════════════════════════════════════════════
+// EXPORT
+// ════════════════════════════════════════════════
+function buildRows(did){
+  const MASTER = [["A",6,22117,"DEC TROZ BARRA OREO MIX (PA)"],["A",7,22064,"DEC TROZ TOR RED VELVET (PA)"],["A",8,22058,"DEC TROZ TOR DARK CAKE (PA)"],["A",9,22110,"DEC TROZ PIE DE NUTELLA (PA)"],["A",10,22039,"DEC TROZ PIE LEMON (PA)"],["A",11,22037,"DEC TROZ PIE APPLE CRUMBLE (PA)"],["A",13,22008,"DEC TROZ CH OREO (PA)"],["A",14,22016,"DEC TROZ CH NY NEUTRO (PA)"],["A",16,22065,"DEC MED TOR RED VELVET (PA)"],["A",17,22059,"DEC MED TOR DARK CAKE (PA)"],["A",18,22109,"DEC MED PIE DE NUTELLA (PA)"],["A",20,22009,"DEC MED CH OREO (PA)"],["A",22,22063,"DEC GRD TOR RED VELVET (PA)"],["A",23,22057,"DEC GRD TOR DARK CAKE (PA)"],["A",24,22108,"DEC GRD PIE NUTELLA (PA)"],["A",25,22038,"DEC GRD PIE LEMON (PA)"],["A",26,22036,"DEC GRD PIE APPLE CRUMBLE (PA)"],["A",28,22007,"DEC GRD CH OREO (PA)"],["B",1,22002,"DEC TROZ BARRA PEANUT BUTTER (PA)"],["B",2,22086,"DEC TROZ TOR LEMON BLUEBERRIES (PA)"],["B",3,22053,"DEC TROZ TOR CARROT CAKE (PA)"],["B",4,22050,"DEC TROZ TOR BROWNIE MANJAR BLANCO (PA)"],["B",5,22081,"DEC TROZ S/A TOR CARROT CAKE (PA)"],["B",6,22092,"DEC TROZ CH WHITE CHOCOLATE RASPBERRY (PA)"],["B",10,22088,"DEC MED TOR LEMON BLUEBERRIES (PA)"],["B",11,22054,"DEC MED TOR CARROT CAKE (PA)"],["B",12,22051,"DEC MED TOR BROWNIE MANJAR BLANCO (PA)"],["B",13,22080,"DEC MED S/A TOR CARROT CAKE (PA)"],["B",14,22094,"DEC MED CH WHITE CHOCOLATE RASPBERRY (PA)"],["B",18,22087,"DEC GRD TOR LEMON BLUEBERRIES (PA)"],["B",19,22052,"DEC GRD TOR CARROT CAKE (PA)"],["B",20,22049,"DEC GRD TOR BROWNIE MANJAR BLANCO (PA)"],["B",21,22082,"DEC GRD S/A TOR CARROT CAKE (PA)"],["B",22,22093,"DEC GRD CH WHITE CHOCOLATE RASPBERRY (PA)"],["C",2,22031,"DEC COOKIE AVENA CRANBERRY"],["C",3,22033,"DEC COOKIE CHOCOLATE CHIP WALNUT (PA)"],["C",4,22034,"DEC COOKIE TRIPLE CHOCOLATE (PA)"],["C",6,22003,"DEC TROZ BROWNIE TRADICIONAL (PA)"],["C",7,22001,"DEC TROZ BROWNIE DULCE DE LECHE (PA)"],["C",8,22125,"DEC TROZ LEMONIE (PA)"],["C",9,22044,"DEC TROZ QUEQUE CHOCOLATE (PA)"],["C",10,22083,"DEC TROZ QUEQUE S/A ZANAHORIA (PA)"],["C",11,22045,"DEC TROZ QUEQUE ZANAHORIA (PA)"],["C",12,22143,"DEC TROZ QUEQUE PLATANO (PA)"],["C",13,22072,"DEC ENT QUEQUE CHOCOLATE (PA)"],["C",14,22084,"DEC ENT QUEQUE S/A ZANAHORIA (PA)"],["C",15,22073,"DEC ENT QUEQUE ZANAHORIA (PA)"],["C",16,22142,"DEC ENT QUEQUE PLATANO (PA)"]];
+
+  const PROD_TO_DEC = {};
+  for(const [dec, prod] of Object.entries(DEC_MAP)){
+    if(Array.isArray(prod)) for(const p of prod) PROD_TO_DEC[p]=dec;
+    else PROD_TO_DEC[prod]=dec;
+  }
+
+  // Aggregate dispatch quantities and plant stock by DEC name
+  const decQty={}, decPlant={};
+  for(const p of PRODUCTS){
+    const dec=PROD_TO_DEC[p.name]; if(!dec) continue;
+    const qty=dispatch[did][p.name]||{};
+    if(!decQty[dec]){decQty[dec]={};for(const s of STORES)decQty[dec][s]=0;}
+    for(const s of STORES) decQty[dec][s]+=qty[s]||0;
+    const ps=plantStock[p.name];
+    if(ps!==undefined) decPlant[dec]=Math.max(decPlant[dec]||0,ps);
+  }
+
+  // Constrained DECs (plant-limited)
+  const constProds=constrained[did]||{};
+  const constDecs=new Set();
+  for(const pn of Object.keys(constProds)){
+    const d=PROD_TO_DEC[pn]; if(d) constDecs.add(d);
+  }
+
+  // Build rows in MASTER order
+  const rows=[{tipo:'TIPO',pos:'Pos',num:'Num.Articulo',art:'Articulo',plant:'Planta',
+    stores:Object.fromEntries(STORES.map(s=>[s,s])),total:'TOTAL',header:true}];
+
+  for(const [tipo,pos,num,dec] of MASTER){
+    const storeVals=Object.fromEntries(STORES.map(s=>[s,decQty[dec]?.[s]||0]));
+    const total=Object.values(storeVals).reduce((a,b)=>a+b,0);
+    const plant=decPlant[dec]??0;
+    rows.push({tipo,pos,num,art:dec,plant,stores:storeVals,total,
+      constrained:constDecs.has(dec)});
+  }
+
+  // Grand total row
+  const gt=Object.fromEntries(STORES.map(s=>[s,
+    MASTER.reduce((a,[,,,dec])=>a+(decQty[dec]?.[s]||0),0)]));
+  const gtPlant=MASTER.reduce((a,[,,,dec])=>a+(decPlant[dec]||0),0);
+  rows.push({tipo:'',pos:'',num:'',art:'TOTAL',plant:gtPlant,stores:gt,
+    total:Object.values(gt).reduce((a,b)=>a+b,0),isTotal:true});
+  return rows;
+}
+
+
+function exportCSV(){
+  const did=currentDispatch;
+  const rows=buildRows(did);
+  const lines=[['TIPO','Pos','Num.Articulo','Articulo','Planta',...STORES,'TOTAL']
+    .map(c=>`"${c}"`).join(',')];
+  for(const r of rows.slice(1)){
+    const vals=[r.tipo,r.pos,r.num,r.art,r.plant,
+      ...STORES.map(s=>r.stores[s]||0),r.total];
+    lines.push(vals.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(','));
+  }
+  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const date=new Date().toISOString().slice(0,10);
+  const dispId=currentDispatch==='vie_am'?'Vie_AM':currentDispatch==='vie_pm'?'Vie_PM':'Sab_AM';
+  a.download=`Despacho_${dispId}_DP_${date}.csv`;
+  a.click(); URL.revokeObjectURL(a.href); toast('✓ CSV exportado');
+}
+
+async function exportExcel(){
+  const did=currentDispatch;
+  const rows=buildRows(did);
+  const date=new Date().toISOString().slice(0,10);
+  const dispId=did==='vie_am'?'Vie_AM':did==='vie_pm'?'Vie_PM':'Sab_AM';
+
+  const wb=new ExcelJS.Workbook();
+  wb.creator='Factory Nine'; wb.created=new Date();
+  const ws=wb.addWorksheet(DISPATCH_META[did].label);
+
+  // Column definitions
+  ws.columns=[
+    {key:'tipo', width:6},
+    {key:'pos',  width:5},
+    {key:'num',  width:14},
+    {key:'art',  width:44},
+    {key:'plant',width:9},
+    ...STORES.map(s=>({key:s, width:10})),
+    {key:'total',width:9},
+  ];
+
+  // Colors
+  const C={
+    headerBg:'1A7A5E', headerFg:'FFFFFF',
+    totalBg:'F0EFEB',  totalFg:'1A7A5E',
+    redBg:'FECACA',    redFg:'9C0006',
+    plantWarn:'FEF3C7',plantWarnFg:'92400E',
+    blue:'1D5FA3',
+    stripe:'F8F7F3',
+    border:'E2E0D8',
+  };
+
+  const thinBorder = side => ({style:'thin', color:{argb:'FF'+C.border}});
+  const allBorders = {
+    top:thinBorder(), bottom:thinBorder(),
+    left:thinBorder(), right:thinBorder()
+  };
+  const thickBorder = {
+    top:{style:'medium',color:{argb:'FF9A9A92'}},
+    bottom:{style:'medium',color:{argb:'FF9A9A92'}},
+    left:thinBorder(), right:thinBorder()
+  };
+
+  rows.forEach((row, ri) => {
+    const exRow = ws.addRow([
+      row.tipo, row.pos, row.num, row.art, row.plant,
+      ...STORES.map(s=>row.stores[s]||0),
+      row.total
+    ]);
+    exRow.height = ri===0 ? 20 : 16;
+
+    exRow.eachCell((cell, colNum) => {
+      const isNumCol = colNum >= 5;  // Planta + stores + total
+      cell.alignment = {horizontal: isNumCol?'right':'left', vertical:'middle'};
+      cell.border = row.header||row.isTotal ? thickBorder : allBorders;
+
+      if(row.header){
+        cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.headerBg}};
+        cell.font={bold:true,color:{argb:'FF'+C.headerFg},size:10,name:'Calibri'};
+      } else if(row.isTotal){
+        cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.totalBg}};
+        cell.font={bold:true,size:10,name:'Calibri',
+          color:{argb:'FF'+(isNumCol?C.totalFg:'1A1A18')}};
+      } else {
+        // Constrained: store cols and plant col get red/amber
+        const isStoreCol = colNum>=6 && colNum<=18;
+        const isPlantCol = colNum===5;
+        const isTotalCol = colNum===19;
+
+        if(row.constrained && isStoreCol && (cell.value||0)>0){
+          cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.redBg}};
+          cell.font={size:10,name:'Calibri',color:{argb:'FF'+C.redFg}};
+        } else if(row.constrained && isPlantCol){
+          cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.plantWarn}};
+          cell.font={size:10,name:'Calibri',color:{argb:'FF'+C.plantWarnFg}};
+        } else {
+          if(ri%2===0) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.stripe}};
+          cell.font={size:10,name:'Calibri',
+            color:{argb:'FF'+(isTotalCol?C.totalFg:isPlantCol?C.blue:'1A1A18')}};
+          if(isTotalCol||isPlantCol) cell.font.bold=true;
+        }
+      }
+    });
+  });
+
+  // Freeze header row
+  ws.views=[{state:'frozen',ySplit:1,activeCell:'A2'}];
+
+  // Write and download
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`Despacho_${dispId}_DP_${date}.xlsx`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('✓ Excel exportado con formato');
+}
+// ════════════════════════
+// NAV
+// ════════════════════════
+function gotoTab(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).style.display='block';
+  el.classList.add('active');
+  if(id==='est-prod') renderEstProd();
+}
+
+// ════════════════════════
+// UTILS
+// ════════════════════════
+function updateStatus(){
+  const did = currentDispatch;
+  const tot = PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(dispatch[did][p.name]?.[s]||0),0),0);
+  document.getElementById('st-units').innerHTML = `Unidades: <b>${tot.toLocaleString('es-CL')}</b>`;
+  document.getElementById('st-did').textContent = DISPATCH_META[did].label;
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ════════════════════════
+// INIT
+// ════════════════════════
+window.addEventListener('load', () => {
+  calcDispatch();
+  updateStatus();
+});
+</script>
+</body>
+</html>
