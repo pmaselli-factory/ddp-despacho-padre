@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Despachos · Día del Padre 2026</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
 
 :root {
   --bg:        #f5f4f0;
@@ -29,8 +29,8 @@
   --badge-a-bg:#dbeafe; --badge-a-fg:#1d4ed8;
   --badge-b-bg:#d1fae5; --badge-b-fg:#065f46;
   --badge-c-bg:#fef3c7; --badge-c-fg:#92400e;
-  --mono:      'IBM Plex Mono', monospace;
-  --sans:      'IBM Plex Sans', sans-serif;
+  --mono:      'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --sans:      'Helvetica Neue', Helvetica, Arial, sans-serif;
   --radius:    4px;
   --shadow:    0 1px 3px rgba(0,0,0,.07);
 }
@@ -306,6 +306,7 @@ tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left
   <nav class="nav-tabs" id="navTabs">
     <div class="nav-tab active" onclick="gotoTab('despacho',this)">Despachos</div>
     <div class="nav-tab" onclick="gotoTab('est-prod',this)">Estimado × Producto</div>
+    <div class="nav-tab" onclick="gotoTab('est-despacho',this)">Estimado × Despacho</div>
   </nav>
   <div class="topbar-right">
     <label class="btn btn-sm btn-primary" title="Cargar archivo Stock on Hand (tiendas + planta)">
@@ -367,13 +368,16 @@ tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div>
         <div class="page-title">Estimado de Demanda × Producto × Tienda</div>
-        <div class="page-sub">Distribución 30% Vie / 50% Sáb / 20% Dom · basado en Pedido Ajustado</div>
+        <div class="page-sub">Distribución histórica por familia · basado en Pedido Ajustado fin de semana</div>
       </div>
-      <div style="display:flex;gap:6px">
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <button class="btn day-btn active" id="day-btn-total" onclick="setDay('total',this)">Total</button>
         <button class="btn day-btn" id="day-btn-fri" onclick="setDay('fri',this)">Viernes</button>
         <button class="btn day-btn" id="day-btn-sat" onclick="setDay('sat',this)">Sábado</button>
         <button class="btn day-btn" id="day-btn-dom" onclick="setDay('dom',this)">Domingo</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
+        <button class="btn btn-success btn-sm" onclick="downloadEstimado()">↓ Descargar Excel</button>
+        <button class="btn btn-sm" onclick="downloadEstimadoCSV()">↓ CSV</button>
       </div>
     </div>
     <div class="card">
@@ -384,6 +388,51 @@ tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left
 </div>
 
 
+
+<!-- ══ PAGE: ESTIMADO × DESPACHO ══ -->
+<div class="page" id="page-est-despacho">
+  <div class="page-wrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div class="page-title">Estimado × Despacho</div>
+        <div class="page-sub">Demanda por día según patrón familiar · Cobertura aplicada por día · Redondeado al múltiplo</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn btn-success btn-sm" onclick="downloadEstDespacho()">↓ Descargar Excel</button>
+        <button class="btn btn-sm" onclick="downloadEstDespachoCSV()">↓ CSV</button>
+      </div>
+    </div>
+
+    <!-- Coverage legend -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+      <div class="kpi" style="min-width:180px;flex:1">
+        <div class="kpi-label"><span style="background:var(--badge-a-bg);color:var(--badge-a-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">A</span> Viernes AM</div>
+        <div class="kpi-val" style="font-size:16px;line-height:1.3">100% Vie<br>+ 80% Sáb</div>
+        <div class="kpi-sub">Por familia y tienda</div>
+      </div>
+      <div class="kpi" style="min-width:180px;flex:1">
+        <div class="kpi-label"><span style="background:var(--badge-b-bg);color:var(--badge-b-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">B</span> Viernes PM</div>
+        <div class="kpi-val" style="font-size:16px;line-height:1.3">100% Vie + 100% Sáb<br>+ 30% Dom</div>
+        <div class="kpi-sub">Por familia y tienda</div>
+      </div>
+      <div class="kpi" style="min-width:180px;flex:1">
+        <div class="kpi-label"><span style="background:var(--badge-c-bg);color:var(--badge-c-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">C</span> Sábado AM</div>
+        <div class="kpi-val" style="font-size:16px;line-height:1.3">100% Sáb<br>+ 100% Dom</div>
+        <div class="kpi-sub">Por familia y tienda</div>
+      </div>
+      <div class="kpi" style="min-width:180px;flex:1">
+        <div class="kpi-label">Total fin de semana</div>
+        <div class="kpi-val green" id="edTotalUnits">—</div>
+        <div class="kpi-sub">unidades producción</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">Desglose por producto y despacho</div>
+      <div class="card-body" id="estDespachoTable"></div>
+    </div>
+  </div>
+</div>
 
 <!-- STATUS BAR -->
 <div class="statusbar">
@@ -419,7 +468,7 @@ const MAJOR = {
 };
 const FAM2MG={};Object.entries(MAJOR).forEach(([mg,fs])=>fs.forEach(f=>FAM2MG[f]=mg));
 
-const PRODUCTS=[{"name":"Trozo Ch NY Berries","familia":"Cheesecake Trozo","mult":10,"num":22016,"wknd":{"Chicureo":20,"La Florida":80,"La Reina":60,"Lastarria":100,"Los Militares":100,"Luis Pasteur":40,"Maipu":60,"Nunoa":130,"Penalolen":50,"Pocuro":70,"Providencia":80,"San Miguel":80,"Tabancura":80}},{"name":"Trozo Ch NY Maracuya","familia":"Cheesecake Trozo","mult":10,"num":null,"wknd":{"Chicureo":10,"La Florida":50,"La Reina":30,"Lastarria":60,"Los Militares":60,"Luis Pasteur":20,"Maipu":30,"Nunoa":80,"Penalolen":30,"Pocuro":40,"Providencia":50,"San Miguel":50,"Tabancura":50}},{"name":"Trozo Ch Oreo","familia":"Cheesecake Trozo","mult":10,"num":22008,"wknd":{"Chicureo":30,"La Florida":110,"La Reina":70,"Lastarria":130,"Los Militares":130,"Luis Pasteur":50,"Maipu":80,"Nunoa":160,"Penalolen":70,"Pocuro":90,"Providencia":100,"San Miguel":100,"Tabancura":100}},{"name":"Trozo Ch White Raspberry","familia":"Cheesecake Trozo","mult":10,"num":22092,"wknd":{"Chicureo":20,"La Florida":80,"La Reina":60,"Lastarria":100,"Los Militares":100,"Luis Pasteur":40,"Maipu":60,"Nunoa":120,"Penalolen":50,"Pocuro":70,"Providencia":70,"San Miguel":70,"Tabancura":80}},{"name":"Trozo Apple Pie","familia":"Pie Trozo","mult":8,"num":22037,"wknd":{"Chicureo":32,"La Florida":80,"La Reina":64,"Lastarria":88,"Los Militares":104,"Luis Pasteur":32,"Maipu":56,"Nunoa":136,"Penalolen":48,"Pocuro":96,"Providencia":56,"San Miguel":80,"Tabancura":80}},{"name":"Trozo Lemon Pie","familia":"Pie Trozo","mult":8,"num":22039,"wknd":{"Chicureo":40,"La Florida":112,"La Reina":88,"Lastarria":120,"Los Militares":144,"Luis Pasteur":48,"Maipu":72,"Nunoa":184,"Penalolen":72,"Pocuro":128,"Providencia":80,"San Miguel":112,"Tabancura":112}},{"name":"Trozo Nutella Pie","familia":"Pie Trozo","mult":8,"num":22110,"wknd":{"Chicureo":32,"La Florida":88,"La Reina":64,"Lastarria":96,"Los Militares":112,"Luis Pasteur":32,"Maipu":56,"Nunoa":144,"Penalolen":56,"Pocuro":104,"Providencia":64,"San Miguel":88,"Tabancura":88}},{"name":"Trozo Berries & Chocolate Blanco Pie","familia":"Pie Trozo","mult":8,"num":22147,"wknd":{"Chicureo":16,"La Florida":32,"La Reina":24,"Lastarria":32,"Los Militares":40,"Luis Pasteur":16,"Maipu":24,"Nunoa":56,"Penalolen":24,"Pocuro":40,"Providencia":24,"San Miguel":32,"Tabancura":32}},{"name":"Trozo Tor Brownie Man y Framb","familia":"Torta Trozo","mult":10,"num":22050,"wknd":{"Chicureo":40,"La Florida":90,"La Reina":40,"Lastarria":110,"Los Militares":80,"Luis Pasteur":30,"Maipu":60,"Nunoa":110,"Penalolen":50,"Pocuro":60,"Providencia":70,"San Miguel":80,"Tabancura":50}},{"name":"Trozo Tor Carrot Cake","familia":"Torta Trozo","mult":10,"num":22053,"wknd":{"Chicureo":50,"La Florida":140,"La Reina":60,"Lastarria":160,"Los Militares":120,"Luis Pasteur":50,"Maipu":80,"Nunoa":160,"Penalolen":80,"Pocuro":90,"Providencia":110,"San Miguel":120,"Tabancura":80}},{"name":"Trozo Tor Dark Cake","familia":"Torta Trozo","mult":10,"num":22058,"wknd":{"Chicureo":40,"La Florida":110,"La Reina":40,"Lastarria":120,"Los Militares":90,"Luis Pasteur":40,"Maipu":70,"Nunoa":120,"Penalolen":60,"Pocuro":70,"Providencia":80,"San Miguel":100,"Tabancura":60}},{"name":"Trozo Tor Lemon Blueberry Cake","familia":"Torta Trozo","mult":10,"num":22086,"wknd":{"Chicureo":30,"La Florida":70,"La Reina":30,"Lastarria":80,"Los Militares":60,"Luis Pasteur":30,"Maipu":40,"Nunoa":80,"Penalolen":40,"Pocuro":50,"Providencia":60,"San Miguel":70,"Tabancura":40}},{"name":"Trozo Tor Red Velvet","familia":"Torta Trozo","mult":10,"num":22064,"wknd":{"Chicureo":20,"La Florida":60,"La Reina":20,"Lastarria":60,"Los Militares":50,"Luis Pasteur":20,"Maipu":40,"Nunoa":70,"Penalolen":30,"Pocuro":40,"Providencia":40,"San Miguel":60,"Tabancura":30}},{"name":"Trozo Tor S/A Carrot Cake","familia":"Torta Trozo","mult":10,"num":22081,"wknd":{"Chicureo":20,"La Florida":50,"La Reina":20,"Lastarria":50,"Los Militares":40,"Luis Pasteur":20,"Maipu":30,"Nunoa":50,"Penalolen":20,"Pocuro":30,"Providencia":30,"San Miguel":40,"Tabancura":30}},{"name":"Trozo Tor S/A Chocolate","familia":"Torta Trozo","mult":10,"num":22152,"wknd":{"Chicureo":20,"La Florida":60,"La Reina":30,"Lastarria":60,"Los Militares":50,"Luis Pasteur":20,"Maipu":30,"Nunoa":60,"Penalolen":30,"Pocuro":40,"Providencia":40,"San Miguel":50,"Tabancura":30}},{"name":"Oreo Mix Bar","familia":"Barras","mult":5,"num":22117,"wknd":{"Chicureo":5,"La Florida":25,"La Reina":20,"Lastarria":25,"Los Militares":25,"Luis Pasteur":10,"Maipu":15,"Nunoa":30,"Penalolen":15,"Pocuro":20,"Providencia":25,"San Miguel":20,"Tabancura":20}},{"name":"Peanut Butter Bar","familia":"Barras","mult":5,"num":22002,"wknd":{"Chicureo":5,"La Florida":20,"La Reina":15,"Lastarria":20,"Los Militares":20,"Luis Pasteur":10,"Maipu":10,"Nunoa":25,"Penalolen":15,"Pocuro":15,"Providencia":20,"San Miguel":15,"Tabancura":15}},{"name":"Brownie H\u00famedo Tradicional","familia":"Brownies","mult":5,"num":22003,"wknd":{"Chicureo":55,"La Florida":175,"La Reina":120,"Lastarria":215,"Los Militares":265,"Luis Pasteur":90,"Maipu":115,"Nunoa":285,"Penalolen":105,"Pocuro":215,"Providencia":160,"San Miguel":190,"Tabancura":265}},{"name":"Brownie con Dulce Leche","familia":"Brownies","mult":5,"num":22001,"wknd":{"Chicureo":30,"La Florida":115,"La Reina":80,"Lastarria":145,"Los Militares":175,"Luis Pasteur":60,"Maipu":75,"Nunoa":190,"Penalolen":70,"Pocuro":145,"Providencia":105,"San Miguel":125,"Tabancura":175}},{"name":"Lemonie","familia":"Brownies","mult":5,"num":22125,"wknd":{"Chicureo":30,"La Florida":95,"La Reina":65,"Lastarria":120,"Los Militares":145,"Luis Pasteur":50,"Maipu":65,"Nunoa":155,"Penalolen":60,"Pocuro":120,"Providencia":90,"San Miguel":105,"Tabancura":140}},{"name":"Cookie Avena Cranberry","familia":"Galletones","mult":5,"num":22031,"wknd":{"Chicureo":10,"La Florida":25,"La Reina":15,"Lastarria":35,"Los Militares":35,"Luis Pasteur":15,"Maipu":20,"Nunoa":40,"Penalolen":20,"Pocuro":25,"Providencia":30,"San Miguel":25,"Tabancura":25}},{"name":"Cookie Chocolate Chip Walnut","familia":"Galletones","mult":5,"num":22033,"wknd":{"Chicureo":10,"La Florida":30,"La Reina":20,"Lastarria":40,"Los Militares":45,"Luis Pasteur":15,"Maipu":25,"Nunoa":55,"Penalolen":25,"Pocuro":30,"Providencia":35,"San Miguel":30,"Tabancura":30}},{"name":"Cookie Triple Chocolate","familia":"Galletones","mult":5,"num":22034,"wknd":{"Chicureo":10,"La Florida":30,"La Reina":25,"Lastarria":45,"Los Militares":50,"Luis Pasteur":20,"Maipu":25,"Nunoa":60,"Penalolen":25,"Pocuro":35,"Providencia":40,"San Miguel":35,"Tabancura":35}},{"name":"Troz Queque Chocolate","familia":"Queque Trozo","mult":4,"num":22044,"wknd":{"Chicureo":12,"La Florida":32,"La Reina":24,"Lastarria":36,"Los Militares":36,"Luis Pasteur":16,"Maipu":24,"Nunoa":48,"Penalolen":24,"Pocuro":28,"Providencia":32,"San Miguel":32,"Tabancura":32}},{"name":"Troz Queque Zanahoria","familia":"Queque Trozo","mult":4,"num":22045,"wknd":{"Chicureo":8,"La Florida":24,"La Reina":20,"Lastarria":28,"Los Militares":28,"Luis Pasteur":12,"Maipu":20,"Nunoa":40,"Penalolen":20,"Pocuro":24,"Providencia":28,"San Miguel":24,"Tabancura":24}},{"name":"Troz Queque S/A Zanahoria","familia":"Queque Trozo","mult":4,"num":22083,"wknd":{"Chicureo":4,"La Florida":12,"La Reina":8,"Lastarria":16,"Los Militares":12,"Luis Pasteur":4,"Maipu":8,"Nunoa":16,"Penalolen":8,"Pocuro":12,"Providencia":12,"San Miguel":12,"Tabancura":12}},{"name":"Troz Queque Pl\u00e1tano","familia":"Queque Trozo","mult":4,"num":22143,"wknd":{"Chicureo":4,"La Florida":16,"La Reina":12,"Lastarria":20,"Los Militares":16,"Luis Pasteur":8,"Maipu":12,"Nunoa":24,"Penalolen":12,"Pocuro":16,"Providencia":16,"San Miguel":16,"Tabancura":16}},{"name":"Mediano Ch NY Berries","familia":"Cheesecake Mediano","mult":1,"num":null,"wknd":{"Chicureo":2,"La Florida":8,"La Reina":5,"Lastarria":9,"Los Militares":8,"Luis Pasteur":3,"Maipu":5,"Nunoa":11,"Penalolen":5,"Pocuro":6,"Providencia":7,"San Miguel":7,"Tabancura":7}},{"name":"Mediano Ch NY Maracuya","familia":"Cheesecake Mediano","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":5,"La Reina":3,"Lastarria":5,"Los Militares":5,"Luis Pasteur":2,"Maipu":3,"Nunoa":7,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Mediano Ch Oreo","familia":"Cheesecake Mediano","mult":1,"num":22009,"wknd":{"Chicureo":2,"La Florida":9,"La Reina":6,"Lastarria":10,"Los Militares":10,"Luis Pasteur":4,"Maipu":6,"Nunoa":13,"Penalolen":6,"Pocuro":7,"Providencia":8,"San Miguel":8,"Tabancura":8}},{"name":"Mediano Ch White Raspberry","familia":"Cheesecake Mediano","mult":1,"num":22094,"wknd":{"Chicureo":1,"La Florida":5,"La Reina":3,"Lastarria":5,"Los Militares":5,"Luis Pasteur":2,"Maipu":3,"Nunoa":6,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Mediano Nutella Pie","familia":"Pie Mediano","mult":1,"num":22109,"wknd":{"Chicureo":2,"La Florida":7,"La Reina":4,"Lastarria":8,"Los Militares":8,"Luis Pasteur":3,"Maipu":4,"Nunoa":10,"Penalolen":5,"Pocuro":7,"Providencia":5,"San Miguel":7,"Tabancura":6}},{"name":"Mediano Berries & Chocolate Blanco Pie","familia":"Pie Mediano","mult":1,"num":22146,"wknd":{"Chicureo":1,"La Florida":3,"La Reina":2,"Lastarria":3,"Los Militares":3,"Luis Pasteur":1,"Maipu":2,"Nunoa":4,"Penalolen":2,"Pocuro":3,"Providencia":2,"San Miguel":3,"Tabancura":2}},{"name":"Mediana Tor Brownie Man y Framb","familia":"Torta Mediana","mult":1,"num":22051,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":6,"Luis Pasteur":2,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":4,"Providencia":5,"San Miguel":6,"Tabancura":4}},{"name":"Mediana Tor Carrot Cake","familia":"Torta Mediana","mult":1,"num":22054,"wknd":{"Chicureo":5,"La Florida":12,"La Reina":5,"Lastarria":14,"Los Militares":10,"Luis Pasteur":4,"Maipu":7,"Nunoa":14,"Penalolen":7,"Pocuro":7,"Providencia":10,"San Miguel":10,"Tabancura":7}},{"name":"Mediana Tor Dark Cake","familia":"Torta Mediana","mult":1,"num":22059,"wknd":{"Chicureo":4,"La Florida":9,"La Reina":4,"Lastarria":10,"Los Militares":8,"Luis Pasteur":3,"Maipu":6,"Nunoa":10,"Penalolen":5,"Pocuro":6,"Providencia":7,"San Miguel":8,"Tabancura":5}},{"name":"Mediana Tor Lemon Blueberry Cake","familia":"Torta Mediana","mult":1,"num":22088,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":6,"Luis Pasteur":3,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":5,"San Miguel":6,"Tabancura":4}},{"name":"Mediana Tor Red Velvet","familia":"Torta Mediana","mult":1,"num":22065,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":7,"Los Militares":5,"Luis Pasteur":2,"Maipu":4,"Nunoa":7,"Penalolen":3,"Pocuro":4,"Providencia":4,"San Miguel":5,"Tabancura":3}},{"name":"Mediana Tor S/A Carrot Cake","familia":"Torta Mediana","mult":1,"num":22080,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Mediana Tor S/A Chocolate","familia":"Torta Mediana","mult":1,"num":22151,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":2,"Pocuro":4,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Ent Queque Chocolate","familia":"Queque Entero","mult":1,"num":22072,"wknd":{"Chicureo":4,"La Florida":6,"La Reina":7,"Lastarria":5,"Los Militares":5,"Luis Pasteur":7,"Maipu":5,"Nunoa":12,"Penalolen":4,"Pocuro":8,"Providencia":5,"San Miguel":4,"Tabancura":10}},{"name":"Ent Queque Zanahoria","familia":"Queque Entero","mult":1,"num":22073,"wknd":{"Chicureo":3,"La Florida":5,"La Reina":5,"Lastarria":4,"Los Militares":4,"Luis Pasteur":5,"Maipu":4,"Nunoa":9,"Penalolen":3,"Pocuro":6,"Providencia":4,"San Miguel":3,"Tabancura":7}},{"name":"Ent Queque S/A Zanahoria","familia":"Queque Entero","mult":1,"num":22084,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":2,"Lastarria":2,"Los Militares":2,"Luis Pasteur":2,"Maipu":2,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":1,"San Miguel":1,"Tabancura":3}},{"name":"Ent Queque Pl\u00e1tano","familia":"Queque Entero","mult":1,"num":22142,"wknd":{"Chicureo":2,"La Florida":3,"La Reina":3,"Lastarria":3,"Los Militares":3,"Luis Pasteur":3,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":4,"Providencia":2,"San Miguel":2,"Tabancura":4}},{"name":"Grande Ch NY Berries","familia":"Cheesecake Grande","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":4,"Luis Pasteur":1,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":3,"Tabancura":3}},{"name":"Grande Ch NY Maracuya","familia":"Cheesecake Grande","mult":1,"num":null,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Ch Oreo","familia":"Cheesecake Grande","mult":1,"num":22007,"wknd":{"Chicureo":1,"La Florida":4,"La Reina":3,"Lastarria":5,"Los Militares":4,"Luis Pasteur":2,"Maipu":2,"Nunoa":6,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":4,"Tabancura":4}},{"name":"Grande Ch White Raspberry","familia":"Cheesecake Grande","mult":1,"num":22093,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":1,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Nutella Pie","familia":"Pie Grande","mult":1,"num":22108,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":3,"Lastarria":6,"Los Militares":6,"Luis Pasteur":2,"Maipu":3,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":4,"San Miguel":5,"Tabancura":5}},{"name":"Grande Pie Apple Crumble","familia":"Pie Grande","mult":1,"num":22036,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":4,"Lastarria":8,"Los Militares":8,"Luis Pasteur":3,"Maipu":4,"Nunoa":10,"Penalolen":5,"Pocuro":7,"Providencia":5,"San Miguel":7,"Tabancura":6}},{"name":"Grande Pie Lemon","familia":"Pie Grande","mult":1,"num":22038,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":3,"Lastarria":6,"Los Militares":6,"Luis Pasteur":2,"Maipu":3,"Nunoa":8,"Penalolen":4,"Pocuro":5,"Providencia":4,"San Miguel":5,"Tabancura":5}},{"name":"Grande Berries & Chocolate Blanco Pie","familia":"Pie Grande","mult":1,"num":22145,"wknd":{"Chicureo":1,"La Florida":2,"La Reina":1,"Lastarria":2,"Los Militares":2,"Luis Pasteur":1,"Maipu":1,"Nunoa":3,"Penalolen":2,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Tor Brownie Man y Framb","familia":"Torta Grande","mult":1,"num":22049,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":5,"Los Militares":3,"Luis Pasteur":2,"Maipu":3,"Nunoa":5,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":4,"Tabancura":3}},{"name":"Grande Tor Carrot Cake","familia":"Torta Grande","mult":1,"num":22052,"wknd":{"Chicureo":3,"La Florida":7,"La Reina":3,"Lastarria":8,"Los Militares":5,"Luis Pasteur":3,"Maipu":4,"Nunoa":8,"Penalolen":4,"Pocuro":4,"Providencia":6,"San Miguel":6,"Tabancura":4}},{"name":"Grande Tor Dark Cake","familia":"Torta Grande","mult":1,"num":22057,"wknd":{"Chicureo":2,"La Florida":5,"La Reina":2,"Lastarria":6,"Los Militares":4,"Luis Pasteur":2,"Maipu":3,"Nunoa":6,"Penalolen":3,"Pocuro":3,"Providencia":4,"San Miguel":5,"Tabancura":3}},{"name":"Grande Tor Lemon Blueberry Cake","familia":"Torta Grande","mult":1,"num":22087,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Grande Tor Red Velvet","familia":"Torta Grande","mult":1,"num":22063,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":5,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":4,"Tabancura":2}},{"name":"Grande Tor S/A Carrot Cake","familia":"Torta Grande","mult":1,"num":22082,"wknd":{"Chicureo":1,"La Florida":3,"La Reina":1,"Lastarria":3,"Los Militares":2,"Luis Pasteur":1,"Maipu":2,"Nunoa":3,"Penalolen":2,"Pocuro":2,"Providencia":2,"San Miguel":2,"Tabancura":2}},{"name":"Grande Tor S/A Chocolate","familia":"Torta Grande","mult":1,"num":22150,"wknd":{"Chicureo":2,"La Florida":4,"La Reina":2,"Lastarria":4,"Los Militares":3,"Luis Pasteur":2,"Maipu":2,"Nunoa":4,"Penalolen":2,"Pocuro":3,"Providencia":3,"San Miguel":3,"Tabancura":2}}];
+const PRODUCTS=[{"name": "Trozo Ch NY Berries", "familia": "Cheesecake Trozo", "mult": 10, "num": 22016, "wknd": {"Chicureo": 20, "La Florida": 80, "La Reina": 60, "Lastarria": 100, "Los Militares": 100, "Luis Pasteur": 40, "Maipu": 60, "Nunoa": 130, "Penalolen": 50, "Pocuro": 70, "Providencia": 80, "San Miguel": 80, "Tabancura": 80}}, {"name": "Trozo Ch NY Maracuya", "familia": "Cheesecake Trozo", "mult": 10, "num": null, "wknd": {"Chicureo": 20, "La Florida": 50, "La Reina": 40, "Lastarria": 60, "Los Militares": 60, "Luis Pasteur": 30, "Maipu": 40, "Nunoa": 80, "Penalolen": 30, "Pocuro": 40, "Providencia": 50, "San Miguel": 50, "Tabancura": 50}}, {"name": "Trozo Ch Oreo", "familia": "Cheesecake Trozo", "mult": 10, "num": 22008, "wknd": {"Chicureo": 30, "La Florida": 110, "La Reina": 70, "Lastarria": 130, "Los Militares": 130, "Luis Pasteur": 50, "Maipu": 80, "Nunoa": 160, "Penalolen": 70, "Pocuro": 90, "Providencia": 100, "San Miguel": 100, "Tabancura": 100}}, {"name": "Trozo Ch Triple Chocolate", "familia": "Cheesecake Trozo", "mult": 1, "num": 101021, "wknd": {"Chicureo": 20, "La Florida": 80, "La Reina": 60, "Lastarria": 100, "Los Militares": 100, "Luis Pasteur": 40, "Maipu": 60, "Nunoa": 120, "Penalolen": 50, "Pocuro": 70, "Providencia": 70, "San Miguel": 70, "Tabancura": 80}}, {"name": "Trozo Ch White Raspberry", "familia": "Cheesecake Trozo", "mult": 10, "num": 22092, "wknd": {"Chicureo": 20, "La Florida": 80, "La Reina": 60, "Lastarria": 100, "Los Militares": 100, "Luis Pasteur": 40, "Maipu": 60, "Nunoa": 120, "Penalolen": 50, "Pocuro": 70, "Providencia": 70, "San Miguel": 70, "Tabancura": 80}}, {"name": "Trozo Apple Pie", "familia": "Pie Trozo", "mult": 8, "num": 22037, "wknd": {"Chicureo": 32, "La Florida": 80, "La Reina": 64, "Lastarria": 88, "Los Militares": 104, "Luis Pasteur": 32, "Maipu": 56, "Nunoa": 136, "Penalolen": 48, "Pocuro": 96, "Providencia": 56, "San Miguel": 80, "Tabancura": 80}}, {"name": "Trozo Lemon Pie", "familia": "Pie Trozo", "mult": 8, "num": 22039, "wknd": {"Chicureo": 40, "La Florida": 112, "La Reina": 88, "Lastarria": 120, "Los Militares": 144, "Luis Pasteur": 48, "Maipu": 72, "Nunoa": 184, "Penalolen": 72, "Pocuro": 128, "Providencia": 80, "San Miguel": 112, "Tabancura": 112}}, {"name": "Trozo Nutella Pie", "familia": "Pie Trozo", "mult": 8, "num": 22110, "wknd": {"Chicureo": 32, "La Florida": 88, "La Reina": 64, "Lastarria": 96, "Los Militares": 112, "Luis Pasteur": 32, "Maipu": 56, "Nunoa": 144, "Penalolen": 56, "Pocuro": 104, "Providencia": 64, "San Miguel": 88, "Tabancura": 88}}, {"name": "Trozo Berries & Chocolate Blanco Pie", "familia": "Pie Trozo", "mult": 8, "num": 22147, "wknd": {"Chicureo": 16, "La Florida": 32, "La Reina": 24, "Lastarria": 32, "Los Militares": 40, "Luis Pasteur": 16, "Maipu": 24, "Nunoa": 56, "Penalolen": 24, "Pocuro": 40, "Providencia": 24, "San Miguel": 32, "Tabancura": 32}}, {"name": "Trozo Tor Brownie Man y Framb", "familia": "Torta Trozo", "mult": 10, "num": 22050, "wknd": {"Chicureo": 40, "La Florida": 90, "La Reina": 40, "Lastarria": 110, "Los Militares": 80, "Luis Pasteur": 30, "Maipu": 60, "Nunoa": 110, "Penalolen": 50, "Pocuro": 60, "Providencia": 70, "San Miguel": 80, "Tabancura": 50}}, {"name": "Trozo Tor Carrot Cake", "familia": "Torta Trozo", "mult": 10, "num": 22053, "wknd": {"Chicureo": 50, "La Florida": 140, "La Reina": 60, "Lastarria": 160, "Los Militares": 120, "Luis Pasteur": 50, "Maipu": 80, "Nunoa": 160, "Penalolen": 80, "Pocuro": 90, "Providencia": 110, "San Miguel": 120, "Tabancura": 80}}, {"name": "Trozo Tor Dark Cake", "familia": "Torta Trozo", "mult": 10, "num": 22058, "wknd": {"Chicureo": 40, "La Florida": 110, "La Reina": 40, "Lastarria": 120, "Los Militares": 90, "Luis Pasteur": 40, "Maipu": 70, "Nunoa": 120, "Penalolen": 60, "Pocuro": 70, "Providencia": 80, "San Miguel": 100, "Tabancura": 60}}, {"name": "Trozo Tor Lemon Blueberry Cake", "familia": "Torta Trozo", "mult": 10, "num": 22086, "wknd": {"Chicureo": 30, "La Florida": 70, "La Reina": 30, "Lastarria": 80, "Los Militares": 60, "Luis Pasteur": 30, "Maipu": 40, "Nunoa": 80, "Penalolen": 40, "Pocuro": 50, "Providencia": 60, "San Miguel": 70, "Tabancura": 40}}, {"name": "Trozo Tor Red Velvet", "familia": "Torta Trozo", "mult": 10, "num": 22064, "wknd": {"Chicureo": 30, "La Florida": 80, "La Reina": 30, "Lastarria": 90, "Los Militares": 70, "Luis Pasteur": 30, "Maipu": 50, "Nunoa": 90, "Penalolen": 50, "Pocuro": 50, "Providencia": 60, "San Miguel": 70, "Tabancura": 50}}, {"name": "Trozo Tor S/A Carrot Cake", "familia": "Torta Trozo", "mult": 10, "num": 22081, "wknd": {"Chicureo": 20, "La Florida": 60, "La Reina": 30, "Lastarria": 70, "Los Militares": 50, "Luis Pasteur": 20, "Maipu": 40, "Nunoa": 70, "Penalolen": 30, "Pocuro": 40, "Providencia": 50, "San Miguel": 50, "Tabancura": 40}}, {"name": "Trozo Tor S/A Chocolate", "familia": "Torta Trozo", "mult": 10, "num": 22152, "wknd": {"Chicureo": 20, "La Florida": 60, "La Reina": 30, "Lastarria": 70, "Los Militares": 50, "Luis Pasteur": 20, "Maipu": 40, "Nunoa": 70, "Penalolen": 40, "Pocuro": 40, "Providencia": 50, "San Miguel": 50, "Tabancura": 40}}, {"name": "Oreo Mix Bar", "familia": "Barras", "mult": 5, "num": 22117, "wknd": {"Chicureo": 5, "La Florida": 20, "La Reina": 10, "Lastarria": 15, "Los Militares": 10, "Luis Pasteur": 5, "Maipu": 20, "Nunoa": 10, "Penalolen": 10, "Pocuro": 20, "Providencia": 25, "San Miguel": 20, "Tabancura": 10}}, {"name": "Peanut Butter Bar", "familia": "Barras", "mult": 5, "num": 22002, "wknd": {"Chicureo": 5, "La Florida": 20, "La Reina": 10, "Lastarria": 15, "Los Militares": 10, "Luis Pasteur": 5, "Maipu": 20, "Nunoa": 15, "Penalolen": 15, "Pocuro": 20, "Providencia": 25, "San Miguel": 20, "Tabancura": 10}}, {"name": "Brownie Húmedo Tradicional", "familia": "Brownies", "mult": 5, "num": 22003, "wknd": {"Chicureo": 40, "La Florida": 105, "La Reina": 80, "Lastarria": 110, "Los Militares": 185, "Luis Pasteur": 55, "Maipu": 70, "Nunoa": 200, "Penalolen": 45, "Pocuro": 130, "Providencia": 85, "San Miguel": 115, "Tabancura": 165}}, {"name": "Brownie con Dulce Leche", "familia": "Brownies", "mult": 5, "num": 22001, "wknd": {"Chicureo": 30, "La Florida": 70, "La Reina": 55, "Lastarria": 75, "Los Militares": 125, "Luis Pasteur": 40, "Maipu": 45, "Nunoa": 135, "Penalolen": 30, "Pocuro": 90, "Providencia": 55, "San Miguel": 80, "Tabancura": 110}}, {"name": "Lemonie", "familia": "Brownies", "mult": 5, "num": 22125, "wknd": {"Chicureo": 25, "La Florida": 65, "La Reina": 50, "Lastarria": 65, "Los Militares": 110, "Luis Pasteur": 35, "Maipu": 40, "Nunoa": 120, "Penalolen": 30, "Pocuro": 80, "Providencia": 50, "San Miguel": 70, "Tabancura": 100}}, {"name": "Cookie Avena Cranberry", "familia": "Galletones", "mult": 5, "num": 22031, "wknd": {"Chicureo": 30, "La Florida": 35, "La Reina": 25, "Lastarria": 40, "Los Militares": 45, "Luis Pasteur": 25, "Maipu": 20, "Nunoa": 55, "Penalolen": 25, "Pocuro": 25, "Providencia": 25, "San Miguel": 35, "Tabancura": 45}}, {"name": "Cookie Chocolate Chip Walnut", "familia": "Galletones", "mult": 5, "num": 22033, "wknd": {"Chicureo": 30, "La Florida": 40, "La Reina": 30, "Lastarria": 40, "Los Militares": 50, "Luis Pasteur": 30, "Maipu": 20, "Nunoa": 60, "Penalolen": 30, "Pocuro": 25, "Providencia": 25, "San Miguel": 40, "Tabancura": 55}}, {"name": "Cookie Triple Chocolate", "familia": "Galletones", "mult": 5, "num": 22034, "wknd": {"Chicureo": 35, "La Florida": 45, "La Reina": 35, "Lastarria": 50, "Los Militares": 60, "Luis Pasteur": 35, "Maipu": 25, "Nunoa": 75, "Penalolen": 35, "Pocuro": 30, "Providencia": 30, "San Miguel": 45, "Tabancura": 65}}, {"name": "Troz Queque Chocolate", "familia": "Queque Trozo", "mult": 4, "num": 22044, "wknd": {"Chicureo": 20, "La Florida": 20, "La Reina": 12, "Lastarria": 24, "Los Militares": 24, "Luis Pasteur": 12, "Maipu": 12, "Nunoa": 28, "Penalolen": 16, "Pocuro": 16, "Providencia": 20, "San Miguel": 16, "Tabancura": 20}}, {"name": "Troz Queque Zanahoria", "familia": "Queque Trozo", "mult": 4, "num": 22045, "wknd": {"Chicureo": 16, "La Florida": 16, "La Reina": 12, "Lastarria": 24, "Los Militares": 20, "Luis Pasteur": 12, "Maipu": 12, "Nunoa": 28, "Penalolen": 16, "Pocuro": 12, "Providencia": 20, "San Miguel": 16, "Tabancura": 16}}, {"name": "Troz Queque S/A Zanahoria", "familia": "Queque Trozo", "mult": 4, "num": 22083, "wknd": {"Chicureo": 20, "La Florida": 20, "La Reina": 12, "Lastarria": 24, "Los Militares": 24, "Luis Pasteur": 12, "Maipu": 12, "Nunoa": 32, "Penalolen": 16, "Pocuro": 16, "Providencia": 20, "San Miguel": 20, "Tabancura": 20}}, {"name": "Troz Queque Plátano", "familia": "Queque Trozo", "mult": 4, "num": 22143, "wknd": {"Chicureo": 16, "La Florida": 16, "La Reina": 12, "Lastarria": 20, "Los Militares": 20, "Luis Pasteur": 12, "Maipu": 12, "Nunoa": 24, "Penalolen": 12, "Pocuro": 12, "Providencia": 16, "San Miguel": 16, "Tabancura": 16}}, {"name": "Mediano Ch NY Berries", "familia": "Cheesecake Mediano", "mult": 1, "num": null, "wknd": {"Chicureo": 7, "La Florida": 10, "La Reina": 12, "Lastarria": 12, "Los Militares": 20, "Luis Pasteur": 9, "Maipu": 7, "Nunoa": 18, "Penalolen": 13, "Pocuro": 15, "Providencia": 10, "San Miguel": 9, "Tabancura": 19}}, {"name": "Mediano Ch NY Maracuya", "familia": "Cheesecake Mediano", "mult": 1, "num": null, "wknd": {"Chicureo": 3, "La Florida": 3, "La Reina": 4, "Lastarria": 4, "Los Militares": 7, "Luis Pasteur": 3, "Maipu": 3, "Nunoa": 6, "Penalolen": 4, "Pocuro": 5, "Providencia": 3, "San Miguel": 3, "Tabancura": 7}}, {"name": "Mediano Ch Oreo", "familia": "Cheesecake Mediano", "mult": 1, "num": 22009, "wknd": {"Chicureo": 6, "La Florida": 9, "La Reina": 10, "Lastarria": 11, "Los Militares": 18, "Luis Pasteur": 8, "Maipu": 6, "Nunoa": 16, "Penalolen": 11, "Pocuro": 13, "Providencia": 9, "San Miguel": 8, "Tabancura": 17}}, {"name": "Mediano Ch Triple Chocolate", "familia": "Cheesecake Mediano", "mult": 1, "num": 201022, "wknd": {"Chicureo": 7, "La Florida": 9, "La Reina": 11, "Lastarria": 12, "Los Militares": 19, "Luis Pasteur": 9, "Maipu": 6, "Nunoa": 18, "Penalolen": 12, "Pocuro": 14, "Providencia": 9, "San Miguel": 8, "Tabancura": 18}}, {"name": "Mediano Ch White Raspberry", "familia": "Cheesecake Mediano", "mult": 1, "num": 22094, "wknd": {"Chicureo": 7, "La Florida": 9, "La Reina": 11, "Lastarria": 12, "Los Militares": 19, "Luis Pasteur": 9, "Maipu": 6, "Nunoa": 18, "Penalolen": 12, "Pocuro": 14, "Providencia": 9, "San Miguel": 8, "Tabancura": 18}}, {"name": "Mediano Nutella Pie", "familia": "Pie Mediano", "mult": 1, "num": 22109, "wknd": {"Chicureo": 7, "La Florida": 4, "La Reina": 8, "Lastarria": 13, "Los Militares": 17, "Luis Pasteur": 7, "Maipu": 4, "Nunoa": 15, "Penalolen": 4, "Pocuro": 8, "Providencia": 7, "San Miguel": 8, "Tabancura": 8}}, {"name": "Mediano Berries & Chocolate Blanco Pie", "familia": "Pie Mediano", "mult": 1, "num": 22146, "wknd": {"Chicureo": 4, "La Florida": 3, "La Reina": 5, "Lastarria": 7, "Los Militares": 10, "Luis Pasteur": 4, "Maipu": 3, "Nunoa": 8, "Penalolen": 3, "Pocuro": 5, "Providencia": 4, "San Miguel": 5, "Tabancura": 5}}, {"name": "Mediana Tor Brownie Man y Framb", "familia": "Torta Mediana", "mult": 1, "num": 22051, "wknd": {"Chicureo": 4, "La Florida": 6, "La Reina": 7, "Lastarria": 8, "Los Militares": 12, "Luis Pasteur": 5, "Maipu": 6, "Nunoa": 11, "Penalolen": 5, "Pocuro": 7, "Providencia": 7, "San Miguel": 10, "Tabancura": 9}}, {"name": "Mediana Tor Carrot Cake", "familia": "Torta Mediana", "mult": 1, "num": 22054, "wknd": {"Chicureo": 10, "La Florida": 15, "La Reina": 17, "Lastarria": 22, "Los Militares": 32, "Luis Pasteur": 13, "Maipu": 16, "Nunoa": 31, "Penalolen": 13, "Pocuro": 20, "Providencia": 17, "San Miguel": 26, "Tabancura": 23}}, {"name": "Mediana Tor Dark Cake", "familia": "Torta Mediana", "mult": 1, "num": 22059, "wknd": {"Chicureo": 5, "La Florida": 7, "La Reina": 8, "Lastarria": 11, "Los Militares": 16, "Luis Pasteur": 7, "Maipu": 8, "Nunoa": 15, "Penalolen": 6, "Pocuro": 10, "Providencia": 8, "San Miguel": 13, "Tabancura": 11}}, {"name": "Mediana Tor Lemon Blueberry Cake", "familia": "Torta Mediana", "mult": 1, "num": 22088, "wknd": {"Chicureo": 5, "La Florida": 7, "La Reina": 8, "Lastarria": 10, "Los Militares": 15, "Luis Pasteur": 6, "Maipu": 8, "Nunoa": 14, "Penalolen": 6, "Pocuro": 9, "Providencia": 8, "San Miguel": 12, "Tabancura": 11}}, {"name": "Mediana Tor Red Velvet", "familia": "Torta Mediana", "mult": 1, "num": 22065, "wknd": {"Chicureo": 4, "La Florida": 6, "La Reina": 7, "Lastarria": 9, "Los Militares": 13, "Luis Pasteur": 6, "Maipu": 7, "Nunoa": 13, "Penalolen": 5, "Pocuro": 8, "Providencia": 7, "San Miguel": 11, "Tabancura": 10}}, {"name": "Mediana Tor S/A Carrot Cake", "familia": "Torta Mediana", "mult": 1, "num": 22080, "wknd": {"Chicureo": 4, "La Florida": 6, "La Reina": 7, "Lastarria": 9, "Los Militares": 13, "Luis Pasteur": 5, "Maipu": 7, "Nunoa": 12, "Penalolen": 5, "Pocuro": 8, "Providencia": 7, "San Miguel": 10, "Tabancura": 9}}, {"name": "Mediana Tor S/A Chocolate", "familia": "Torta Mediana", "mult": 1, "num": 22151, "wknd": {"Chicureo": 3, "La Florida": 5, "La Reina": 5, "Lastarria": 7, "Los Militares": 10, "Luis Pasteur": 4, "Maipu": 5, "Nunoa": 9, "Penalolen": 4, "Pocuro": 6, "Providencia": 5, "San Miguel": 8, "Tabancura": 7}}, {"name": "Ent Queque Chocolate", "familia": "Queque Entero", "mult": 1, "num": 22072, "wknd": {"Chicureo": 2, "La Florida": 4, "La Reina": 4, "Lastarria": 3, "Los Militares": 3, "Luis Pasteur": 4, "Maipu": 3, "Nunoa": 7, "Penalolen": 2, "Pocuro": 5, "Providencia": 3, "San Miguel": 2, "Tabancura": 6}}, {"name": "Ent Queque Zanahoria", "familia": "Queque Entero", "mult": 1, "num": 22073, "wknd": {"Chicureo": 3, "La Florida": 4, "La Reina": 5, "Lastarria": 4, "Los Militares": 4, "Luis Pasteur": 5, "Maipu": 4, "Nunoa": 8, "Penalolen": 3, "Pocuro": 5, "Providencia": 4, "San Miguel": 3, "Tabancura": 7}}, {"name": "Ent Queque S/A Zanahoria", "familia": "Queque Entero", "mult": 1, "num": 22084, "wknd": {"Chicureo": 4, "La Florida": 6, "La Reina": 7, "Lastarria": 5, "Los Militares": 5, "Luis Pasteur": 8, "Maipu": 6, "Nunoa": 12, "Penalolen": 4, "Pocuro": 8, "Providencia": 5, "San Miguel": 4, "Tabancura": 10}}, {"name": "Ent Queque Plátano", "familia": "Queque Entero", "mult": 1, "num": 22142, "wknd": {"Chicureo": 2, "La Florida": 2, "La Reina": 3, "Lastarria": 2, "Los Militares": 2, "Luis Pasteur": 3, "Maipu": 2, "Nunoa": 4, "Penalolen": 2, "Pocuro": 3, "Providencia": 2, "San Miguel": 2, "Tabancura": 3}}, {"name": "Grande Ch NY Berries", "familia": "Cheesecake Grande", "mult": 1, "num": null, "wknd": {"Chicureo": 3, "La Florida": 2, "La Reina": 3, "Lastarria": 2, "Los Militares": 2, "Luis Pasteur": 2, "Maipu": 2, "Nunoa": 3, "Penalolen": 3, "Pocuro": 2, "Providencia": 2, "San Miguel": 3, "Tabancura": 6}}, {"name": "Grande Ch NY Maracuya", "familia": "Cheesecake Grande", "mult": 1, "num": null, "wknd": {"Chicureo": 2, "La Florida": 2, "La Reina": 2, "Lastarria": 2, "Los Militares": 2, "Luis Pasteur": 2, "Maipu": 2, "Nunoa": 2, "Penalolen": 2, "Pocuro": 2, "Providencia": 2, "San Miguel": 2, "Tabancura": 3}}, {"name": "Grande Ch Oreo", "familia": "Cheesecake Grande", "mult": 1, "num": 22007, "wknd": {"Chicureo": 4, "La Florida": 2, "La Reina": 5, "Lastarria": 3, "Los Militares": 3, "Luis Pasteur": 3, "Maipu": 3, "Nunoa": 4, "Penalolen": 4, "Pocuro": 4, "Providencia": 2, "San Miguel": 5, "Tabancura": 10}}, {"name": "Grande Ch Triple Chocolate", "familia": "Cheesecake Grande", "mult": 1, "num": 301019, "wknd": {"Chicureo": 5, "La Florida": 2, "La Reina": 6, "Lastarria": 3, "Los Militares": 4, "Luis Pasteur": 4, "Maipu": 3, "Nunoa": 5, "Penalolen": 5, "Pocuro": 4, "Providencia": 2, "San Miguel": 6, "Tabancura": 12}}, {"name": "Grande Ch White Raspberry", "familia": "Cheesecake Grande", "mult": 1, "num": 22093, "wknd": {"Chicureo": 5, "La Florida": 2, "La Reina": 6, "Lastarria": 3, "Los Militares": 4, "Luis Pasteur": 4, "Maipu": 3, "Nunoa": 5, "Penalolen": 5, "Pocuro": 4, "Providencia": 2, "San Miguel": 6, "Tabancura": 12}}, {"name": "Grande Nutella Pie", "familia": "Pie Grande", "mult": 1, "num": 22108, "wknd": {"Chicureo": 4, "La Florida": 2, "La Reina": 3, "Lastarria": 2, "Los Militares": 4, "Luis Pasteur": 2, "Maipu": 4, "Nunoa": 4, "Penalolen": 3, "Pocuro": 2, "Providencia": 2, "San Miguel": 2, "Tabancura": 4}}, {"name": "Grande Pie Apple Crumble", "familia": "Pie Grande", "mult": 1, "num": 22036, "wknd": {"Chicureo": 10, "La Florida": 5, "La Reina": 6, "Lastarria": 5, "Los Militares": 9, "Luis Pasteur": 5, "Maipu": 9, "Nunoa": 9, "Penalolen": 6, "Pocuro": 3, "Providencia": 5, "San Miguel": 5, "Tabancura": 8}}, {"name": "Grande Pie Lemon", "familia": "Pie Grande", "mult": 1, "num": 22038, "wknd": {"Chicureo": 10, "La Florida": 5, "La Reina": 6, "Lastarria": 5, "Los Militares": 9, "Luis Pasteur": 5, "Maipu": 9, "Nunoa": 9, "Penalolen": 6, "Pocuro": 3, "Providencia": 5, "San Miguel": 5, "Tabancura": 8}}, {"name": "Grande Berries & Chocolate Blanco Pie", "familia": "Pie Grande", "mult": 1, "num": 22145, "wknd": {"Chicureo": 4, "La Florida": 2, "La Reina": 3, "Lastarria": 2, "Los Militares": 4, "Luis Pasteur": 2, "Maipu": 4, "Nunoa": 4, "Penalolen": 3, "Pocuro": 2, "Providencia": 2, "San Miguel": 2, "Tabancura": 4}}, {"name": "Grande Tor Brownie Man y Framb", "familia": "Torta Grande", "mult": 1, "num": 22049, "wknd": {"Chicureo": 5, "La Florida": 4, "La Reina": 3, "Lastarria": 3, "Los Militares": 2, "Luis Pasteur": 3, "Maipu": 6, "Nunoa": 4, "Penalolen": 4, "Pocuro": 3, "Providencia": 2, "San Miguel": 4, "Tabancura": 3}}, {"name": "Grande Tor Carrot Cake", "familia": "Torta Grande", "mult": 1, "num": 22052, "wknd": {"Chicureo": 9, "La Florida": 8, "La Reina": 4, "Lastarria": 6, "Los Militares": 3, "Luis Pasteur": 6, "Maipu": 11, "Nunoa": 8, "Penalolen": 8, "Pocuro": 4, "Providencia": 3, "San Miguel": 8, "Tabancura": 4}}, {"name": "Grande Tor Dark Cake", "familia": "Torta Grande", "mult": 1, "num": 22057, "wknd": {"Chicureo": 7, "La Florida": 6, "La Reina": 3, "Lastarria": 4, "Los Militares": 2, "Luis Pasteur": 4, "Maipu": 8, "Nunoa": 6, "Penalolen": 6, "Pocuro": 3, "Providencia": 2, "San Miguel": 6, "Tabancura": 3}}, {"name": "Grande Tor Lemon Blueberry Cake", "familia": "Torta Grande", "mult": 1, "num": 22087, "wknd": {"Chicureo": 6, "La Florida": 5, "La Reina": 3, "Lastarria": 4, "Los Militares": 2, "Luis Pasteur": 4, "Maipu": 7, "Nunoa": 5, "Penalolen": 5, "Pocuro": 3, "Providencia": 2, "San Miguel": 5, "Tabancura": 3}}, {"name": "Grande Tor Red Velvet", "familia": "Torta Grande", "mult": 1, "num": 22063, "wknd": {"Chicureo": 5, "La Florida": 4, "La Reina": 3, "Lastarria": 3, "Los Militares": 2, "Luis Pasteur": 3, "Maipu": 6, "Nunoa": 4, "Penalolen": 4, "Pocuro": 3, "Providencia": 2, "San Miguel": 4, "Tabancura": 3}}, {"name": "Grande Tor S/A Carrot Cake", "familia": "Torta Grande", "mult": 1, "num": 22082, "wknd": {"Chicureo": 4, "La Florida": 3, "La Reina": 2, "Lastarria": 2, "Los Militares": 2, "Luis Pasteur": 2, "Maipu": 4, "Nunoa": 3, "Penalolen": 3, "Pocuro": 2, "Providencia": 2, "San Miguel": 3, "Tabancura": 2}}, {"name": "Grande Tor S/A Chocolate", "familia": "Torta Grande", "mult": 1, "num": 22150, "wknd": {"Chicureo": 4, "La Florida": 4, "La Reina": 2, "Lastarria": 3, "Los Militares": 2, "Luis Pasteur": 3, "Maipu": 5, "Nunoa": 4, "Penalolen": 4, "Pocuro": 2, "Providencia": 2, "San Miguel": 4, "Tabancura": 2}}];
 
 // ════════════════════════════════════════════════
 // STATE
@@ -661,7 +710,14 @@ function renderEstProd(){
 
 let currentDay = 'total';
 const DAY_LABELS = {total:'Total fin de semana', fri:'Viernes (30%)', sat:'Sábado (50%)', dom:'Domingo (20%)'};
-const DAY_PCT2 = {total:1, fri:0.30, sat:0.50, dom:0.20};
+const DAY_PAT = {"Retail": {"fri": 0.333, "sat": 0.334, "dom": 0.333}, "Barras": {"fri": 0.276, "sat": 0.379, "dom": 0.345}, "Brownies": {"fri": 0.317, "sat": 0.305, "dom": 0.378}, "Cheesecake Grande": {"fri": 0.322, "sat": 0.409, "dom": 0.269}, "Cheesecake Mediano": {"fri": 0.171, "sat": 0.351, "dom": 0.478}, "Cheesecake Trozo": {"fri": 0.224, "sat": 0.327, "dom": 0.449}, "Galletones": {"fri": 0.302, "sat": 0.35, "dom": 0.348}, "Pie Grande": {"fri": 0.194, "sat": 0.411, "dom": 0.395}, "Pie Mediano": {"fri": 0.22, "sat": 0.303, "dom": 0.477}, "Pie Trozo": {"fri": 0.228, "sat": 0.318, "dom": 0.454}, "Queque Entero": {"fri": 0.164, "sat": 0.424, "dom": 0.412}, "Queque Trozo": {"fri": 0.329, "sat": 0.316, "dom": 0.355}, "Torta Grande": {"fri": 0.326, "sat": 0.48, "dom": 0.194}, "Torta Mediana": {"fri": 0.214, "sat": 0.42, "dom": 0.366}, "Torta Trozo": {"fri": 0.222, "sat": 0.32, "dom": 0.458}};
+const DAY_PCT2 = {total:1, fri:0.30, sat:0.50, dom:0.20}; // dispatch coverage (fixed)
+// Per-family day split for estimado table
+function getFamPat(familia, day) {
+  const pat = DAY_PAT[familia];
+  if(!pat || day==='total') return 1;
+  return pat[day==='fri'?'fri':day==='sat'?'sat':'dom'];
+}
 
 function setDay(day, el){
   currentDay = day;
@@ -672,7 +728,6 @@ function setDay(day, el){
 }
 
 function renderEstProdDay(day){
-  const pct = DAY_PCT2[day];
   let h = `<table class="mini-table"><thead><tr>
     <th>Producto</th><th>Familia</th>
     ${STORES.map(s=>`<th>${s}</th>`).join('')}
@@ -680,39 +735,43 @@ function renderEstProdDay(day){
   </tr></thead><tbody>`;
 
   let prevFam=null;
-  const famTot={};
+  const famTotWknd={};  // {fam: {store: wknd_total}}
 
   for(const p of PRODUCTS){
     if(p.familia!==prevFam){
       if(prevFam){
-        const ft=famTot[prevFam];
-        const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round(ft[s]*pct)||''}</td>`).join('');
-        const ftTot=STORES.reduce((a,s)=>a+Math.round(ft[s]*pct),0);
+        const ft=famTotWknd[prevFam];
+        const fpat=getFamPat(prevFam,day);
+        const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round((ft[s]||0)*fpat)||''}</td>`).join('');
+        const ftTot=STORES.reduce((a,s)=>a+Math.round((ft[s]||0)*fpat),0);
         h+=`<tr class="fam-row"><td colspan="2" style="padding-left:14px">● ${prevFam}</td>${ftRow}<td style="font-weight:700;color:var(--green)">${ftTot}</td></tr>`;
       }
-      famTot[p.familia]={};
-      STORES.forEach(s=>famTot[p.familia][s]=0);
+      famTotWknd[p.familia]={};
+      STORES.forEach(s=>famTotWknd[p.familia][s]=0);
       prevFam=p.familia;
     }
-    const tot=STORES.reduce((a,s)=>a+Math.round((p.wknd[s]||0)*pct),0);
+    const ppat=getFamPat(p.familia,day);
     const cells=STORES.map(s=>{
-      const v=Math.round((p.wknd[s]||0)*pct);
-      famTot[p.familia][s]+=(p.wknd[s]||0);
+      const v=Math.round((p.wknd[s]||0)*ppat);
+      famTotWknd[p.familia][s]+=(p.wknd[s]||0);
       return `<td>${v||''}</td>`;
     }).join('');
+    const tot=STORES.reduce((a,s)=>a+Math.round((p.wknd[s]||0)*ppat),0);
     h+=`<tr><td style="padding-left:20px">${p.name}</td><td>${p.familia}</td>${cells}<td style="font-weight:600;color:var(--green)">${tot||''}</td></tr>`;
   }
-  // last family
   if(prevFam){
-    const ft=famTot[prevFam];
-    const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round(ft[s]*pct)||''}</td>`).join('');
-    const ftTot=STORES.reduce((a,s)=>a+Math.round(ft[s]*pct),0);
+    const ft=famTotWknd[prevFam];
+    const fpat=getFamPat(prevFam,day);
+    const ftRow=STORES.map(s=>`<td style="font-weight:600">${Math.round((ft[s]||0)*fpat)||''}</td>`).join('');
+    const ftTot=STORES.reduce((a,s)=>a+Math.round((ft[s]||0)*fpat),0);
     h+=`<tr class="fam-row"><td colspan="2" style="padding-left:14px">● ${prevFam}</td>${ftRow}<td style="font-weight:700;color:var(--green)">${ftTot}</td></tr>`;
   }
 
-  // grand total
+  // grand total — sum all products per store with their family pattern
   const gt={};
-  STORES.forEach(s=>gt[s]=PRODUCTS.reduce((a,p)=>a+Math.round((p.wknd[s]||0)*pct),0));
+  STORES.forEach(s=>{
+    gt[s]=PRODUCTS.reduce((a,p)=>a+Math.round((p.wknd[s]||0)*getFamPat(p.familia,day)),0);
+  });
   const gtTot=STORES.reduce((a,s)=>a+gt[s],0);
   h+=`<tr class="total-row"><td colspan="2">TOTAL</td>${STORES.map(s=>`<td>${gt[s]}</td>`).join('')}<td>${gtTot}</td></tr>`;
   h+='</tbody></table>';
@@ -985,10 +1044,10 @@ async function exportExcel(){
 
       if(row.header){
         cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.headerBg}};
-        cell.font={bold:true,color:{argb:'FF'+C.headerFg},size:10,name:'Calibri'};
+        cell.font={bold:true,color:{argb:'FF'+C.headerFg},size:10,name:'Helvetica Neue'};
       } else if(row.isTotal){
         cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.totalBg}};
-        cell.font={bold:true,size:10,name:'Calibri',
+        cell.font={bold:true,size:10,name:'Helvetica Neue',
           color:{argb:'FF'+(isNumCol?C.totalFg:'1A1A18')}};
       } else {
         // Constrained: store cols and plant col get red/amber
@@ -998,13 +1057,13 @@ async function exportExcel(){
 
         if(row.constrained && isStoreCol && (cell.value||0)>0){
           cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.redBg}};
-          cell.font={size:10,name:'Calibri',color:{argb:'FF'+C.redFg}};
+          cell.font={size:10,name:'Helvetica Neue',color:{argb:'FF'+C.redFg}};
         } else if(row.constrained && isPlantCol){
           cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.plantWarn}};
-          cell.font={size:10,name:'Calibri',color:{argb:'FF'+C.plantWarnFg}};
+          cell.font={size:10,name:'Helvetica Neue',color:{argb:'FF'+C.plantWarnFg}};
         } else {
           if(ri%2===0) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF'+C.stripe}};
-          cell.font={size:10,name:'Calibri',
+          cell.font={size:10,name:'Helvetica Neue',
             color:{argb:'FF'+(isTotalCol?C.totalFg:isPlantCol?C.blue:'1A1A18')}};
           if(isTotalCol||isPlantCol) cell.font.bold=true;
         }
@@ -1024,6 +1083,403 @@ async function exportExcel(){
   toast('✓ Excel exportado con formato');
 }
 // ════════════════════════
+// ESTIMADO DOWNLOADS
+// ════════════════════════
+async function downloadEstimado(){
+  const day = currentDay || 'total';
+  const label = DAY_LABELS[day];
+  const wb2 = new ExcelJS.Workbook();
+  wb2.creator = 'Factory Nine';
+  const ws2 = wb2.addWorksheet(label.replace('/','_').slice(0,31));
+
+  ws2.columns = [
+    {key:'prod', width:40},
+    {key:'fam',  width:22},
+    ...STORES.map(s=>({key:s, width:10})),
+    {key:'total',width:9}
+  ];
+
+  // Header
+  const hrow = ws2.addRow(['Producto','Familia',...STORES,'TOTAL']);
+  hrow.height = 20;
+  hrow.eachCell(cell=>{
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1A7A5E'}};
+    cell.font={bold:true,color:{argb:'FFFFFFFF'},size:10,name:'Helvetica Neue'};
+    cell.alignment={horizontal:'right',vertical:'middle'};
+    cell.border={bottom:{style:'thin',color:{argb:'FFE2E0D8'}}};
+  });
+  hrow.getCell(1).alignment={horizontal:'left',vertical:'middle'};
+  hrow.getCell(2).alignment={horizontal:'left',vertical:'middle'};
+
+  const thinB = {style:'thin',color:{argb:'FFE2E0D8'}};
+  const allB = {top:thinB,bottom:thinB,left:thinB,right:thinB};
+
+  let prevFam=null; let ri=0;
+  for(const p of PRODUCTS){
+    if(p.familia!==prevFam){
+      // Family subtotal row
+      if(prevFam!==null){
+        const ft={}; STORES.forEach(s=>{
+          ft[s]=PRODUCTS.filter(p2=>p2.familia===prevFam)
+            .reduce((a,p2)=>a+Math.round((p2.wknd[s]||0)*getFamPat(prevFam,day)),0);
+        });
+        const ftTot=STORES.reduce((a,s)=>a+(ft[s]||0),0);
+        const fr=ws2.addRow(['● '+prevFam,'',...STORES.map(s=>ft[s]||0),ftTot]);
+        fr.height=15;
+        fr.eachCell((cell,ci)=>{
+          cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0EFEB'}};
+          cell.font={bold:true,size:10,name:'Helvetica Neue',color:{argb:ci>2?'FF1A7A5E':'FF1A1A18'}};
+          cell.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+          cell.border=allB;
+        });
+      }
+      prevFam=p.familia;
+    }
+    const ppat=getFamPat(p.familia,day);
+    const vals=STORES.map(s=>Math.round((p.wknd[s]||0)*ppat));
+    const tot=vals.reduce((a,b)=>a+b,0);
+    const pr=ws2.addRow([p.name,p.familia,...vals,tot]);
+    pr.height=15; ri++;
+    pr.eachCell((cell,ci)=>{
+      if(ri%2===0) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8F7F3'}};
+      cell.font={size:10,name:'Helvetica Neue',color:{argb:ci===pr.cellCount?'FF1A7A5E':'FF1A1A18'}};
+      cell.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+      cell.border=allB;
+      if(ci===pr.cellCount) cell.font.bold=true;
+    });
+  }
+  // Last family row
+  if(prevFam){
+    const ft={}; STORES.forEach(s=>{
+      ft[s]=PRODUCTS.filter(p2=>p2.familia===prevFam)
+        .reduce((a,p2)=>a+Math.round((p2.wknd[s]||0)*getFamPat(prevFam,day)),0);
+    });
+    const ftTot=STORES.reduce((a,s)=>a+(ft[s]||0),0);
+    const fr=ws2.addRow(['● '+prevFam,'',...STORES.map(s=>ft[s]||0),ftTot]);
+    fr.height=15;
+    fr.eachCell((cell,ci)=>{
+      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0EFEB'}};
+      cell.font={bold:true,size:10,name:'Helvetica Neue',color:{argb:ci>2?'FF1A7A5E':'FF1A1A18'}};
+      cell.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+      cell.border=allB;
+    });
+  }
+  // Grand total
+  const gt={}; STORES.forEach(s=>{
+    gt[s]=PRODUCTS.reduce((a,p)=>a+Math.round((p.wknd[s]||0)*getFamPat(p.familia,day)),0);
+  });
+  const gtt=STORES.reduce((a,s)=>a+gt[s],0);
+  const tr=ws2.addRow(['TOTAL','',...STORES.map(s=>gt[s]),gtt]);
+  tr.height=18;
+  tr.eachCell((cell,ci)=>{
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1A7A5E'}};
+    cell.font={bold:true,size:10,name:'Helvetica Neue',color:{argb:'FFFFFFFF'}};
+    cell.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+    cell.border={top:{style:'medium',color:{argb:'FF9A9A92'}}};
+  });
+
+  ws2.views=[{state:'frozen',ySplit:1,activeCell:'A2'}];
+
+  const buf=await wb2.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const dayCode=day==='total'?'Total':day==='fri'?'Viernes':day==='sat'?'Sabado':'Domingo';
+  a.download=`Estimado_${dayCode}_DP2026.xlsx`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('✓ Excel descargado');
+}
+
+function downloadEstimadoCSV(){
+  const day = currentDay || 'total';
+  const label = DAY_LABELS[day];
+  const lines=[['Producto','Familia',...STORES,'TOTAL'].join(',')];
+  for(const p of PRODUCTS){
+    const ppat=getFamPat(p.familia,day);
+    const vals=STORES.map(s=>Math.round((p.wknd[s]||0)*ppat));
+    const tot=vals.reduce((a,b)=>a+b,0);
+    lines.push([`"${p.name}"`,`"${p.familia}"`,...vals,tot].join(','));
+  }
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  const dayCode=day==='total'?'Total':day==='fri'?'Viernes':day==='sat'?'Sabado':'Domingo';
+  a.download=`Estimado_${dayCode}_DP2026.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('✓ CSV descargado');
+}
+
+// ════════════════════════
+// ESTIMADO × DESPACHO
+// ════════════════════════
+// Coverage increments per dispatch
+const DISP_COV = {
+  vie_am: {cov: 0.70, prev: 0.00, label: 'Viernes AM', badge: 'A'},
+  vie_pm: {cov: 0.86, prev: 0.70, label: 'Viernes PM', badge: 'B'},
+  sat:    {cov: 1.00, prev: 0.86, label: 'Sábado AM',  badge: 'C'},
+};
+
+function ceilMult(v, m){ return v<=0 ? 0 : Math.ceil(v/m)*m; }
+
+function calcEstDespacho(){
+  // Each dispatch covers a fraction of each DAY's demand (not total weekend)
+  // day demand per store = wknd * family_day_pattern%
+  // Vie AM  = 1.0*vie + 0.80*sat
+  // Vie PM  = 1.0*vie + 1.0*sat + 0.30*dom
+  // Sáb AM  = 1.0*sat + 1.0*dom
+  const result = {vie_am:{}, vie_pm:{}, sat:{}};
+  for(const p of PRODUCTS){
+    const pat = DAY_PAT[p.familia] || {fri:0.333,sat:0.333,dom:0.334};
+    result.vie_am[p.name] = {};
+    result.vie_pm[p.name] = {};
+    result.sat[p.name]    = {};
+    for(const s of STORES){
+      const w = p.wknd[s] || 0;
+      const vie = w * pat.fri;
+      const sat = w * pat.sat;
+      const dom = w * pat.dom;
+      result.vie_am[p.name][s] = ceilMult(1.0*vie + 0.80*sat,           p.mult);
+      result.vie_pm[p.name][s] = ceilMult(1.0*vie + 1.0*sat + 0.30*dom, p.mult);
+      result.sat[p.name][s]    = ceilMult(1.0*sat + 1.0*dom,             p.mult);
+    }
+  }
+  return result;
+}
+
+function renderEstDespacho(){
+  const ed = calcEstDespacho();
+  
+  // KPI total
+  const total = PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(p.wknd[s]||0),0),0);
+  const el = document.getElementById('edTotalUnits');
+  if(el) el.textContent = total.toLocaleString('es-CL');
+
+  const DISPS = ['vie_am','vie_pm','sat'];
+  const BADGE_STYLE = {
+    vie_am: 'background:var(--badge-a-bg);color:var(--badge-a-fg)',
+    vie_pm: 'background:var(--badge-b-bg);color:var(--badge-b-fg)',
+    sat:    'background:var(--badge-c-bg);color:var(--badge-c-fg)',
+  };
+
+  let h = `<table class="mini-table" style="font-size:11px"><thead>
+    <tr>
+      <th style="text-align:left;min-width:200px">Producto</th>
+      <th style="text-align:left;min-width:130px">Familia</th>
+      ${DISPS.map(d=>`
+        <th colspan="${STORES.length}" style="text-align:center;padding:5px 8px">
+          <span style="${BADGE_STYLE[d]};padding:1px 8px;border-radius:10px;font-size:10px;font-weight:600">
+            ${DISP_COV[d].badge}
+          </span>
+          ${DISP_COV[d].label}
+          <span style="color:var(--text3);font-size:9px;font-weight:400;margin-left:4px">
+            +${Math.round((DISP_COV[d].cov-DISP_COV[d].prev)*100)}%
+          </span>
+        </th>
+        <th style="color:var(--green);min-width:55px">Tot.</th>
+      `).join('')}
+      <th style="color:var(--green);min-width:65px">TOTAL<br>WKND</th>
+    </tr>
+    <tr>
+      <th></th><th></th>
+      ${DISPS.map(()=>STORES.map(s=>`<th style="font-size:9px;font-weight:400;color:var(--text3);min-width:54px">${s.split(' ').pop()}</th>`).join('')+'<th></th>').join('')}
+      <th></th>
+    </tr>
+  </thead><tbody>`;
+
+  let prevFam = null;
+  for(const p of PRODUCTS){
+    if(p.familia !== prevFam){
+      // Family subtotal row
+      if(prevFam !== null){
+        const famProds = PRODUCTS.filter(pp=>pp.familia===prevFam);
+        h += `<tr class="fam-row">
+          <td colspan="2" style="padding-left:14px">● ${prevFam}</td>
+          ${DISPS.map(did=>{
+            const storeCols = STORES.map(s=>{
+              const v = famProds.reduce((a,pp)=>a+(ed[did][pp.name]?.[s]||0),0);
+              return `<td style="font-weight:600">${v||''}</td>`;
+            }).join('');
+            const tot = famProds.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(ed[did][pp.name]?.[s]||0),0),0);
+            return storeCols + `<td style="font-weight:700;color:var(--green)">${tot||''}</td>`;
+          }).join('')}
+          <td style="font-weight:700;color:var(--green)">
+            ${famProds.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(pp.wknd[s]||0),0),0)}
+          </td>
+        </tr>`;
+      }
+      prevFam = p.familia;
+    }
+
+    const wkndTot = STORES.reduce((a,s)=>a+(p.wknd[s]||0),0);
+    h += `<tr>
+      <td style="padding-left:20px">${p.name}</td>
+      <td style="color:var(--text3)">${p.familia}</td>
+      ${DISPS.map(did=>{
+        const storeCols = STORES.map(s=>{
+          const v = ed[did][p.name]?.[s]||0;
+          return `<td>${v||''}</td>`;
+        }).join('');
+        const tot = STORES.reduce((a,s)=>a+(ed[did][p.name]?.[s]||0),0);
+        return storeCols + `<td style="font-weight:600;color:var(--green)">${tot||''}</td>`;
+      }).join('')}
+      <td style="font-weight:600;color:var(--green)">${wkndTot||''}</td>
+    </tr>`;
+  }
+
+  // Last family
+  if(prevFam){
+    const famProds = PRODUCTS.filter(pp=>pp.familia===prevFam);
+    h += `<tr class="fam-row">
+      <td colspan="2" style="padding-left:14px">● ${prevFam}</td>
+      ${DISPS.map(did=>{
+        const storeCols = STORES.map(s=>{
+          const v = famProds.reduce((a,pp)=>a+(ed[did][pp.name]?.[s]||0),0);
+          return `<td style="font-weight:600">${v||''}</td>`;
+        }).join('');
+        const tot = famProds.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(ed[did][pp.name]?.[s]||0),0),0);
+        return storeCols + `<td style="font-weight:700;color:var(--green)">${tot||''}</td>`;
+      }).join('')}
+      <td style="font-weight:700;color:var(--green)">
+        ${famProds.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(pp.wknd[s]||0),0),0)}
+      </td>
+    </tr>`;
+  }
+
+  // Grand total row
+  h += `<tr class="total-row">
+    <td colspan="2">TOTAL</td>
+    ${DISPS.map(did=>{
+      const storeCols = STORES.map(s=>{
+        const v = PRODUCTS.reduce((a,p)=>a+(ed[did][p.name]?.[s]||0),0);
+        return `<td>${v||''}</td>`;
+      }).join('');
+      const tot = PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(ed[did][p.name]?.[s]||0),0),0);
+      return storeCols + `<td style="font-weight:700">${tot}</td>`;
+    }).join('')}
+    <td>${PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(p.wknd[s]||0),0),0)}</td>
+  </tr>`;
+
+  h += '</tbody></table>';
+  document.getElementById('estDespachoTable').innerHTML = h;
+}
+
+async function downloadEstDespacho(){
+  const ed = calcEstDespacho();
+  const DISPS = ['vie_am','vie_pm','sat'];
+
+  const wb2 = new ExcelJS.Workbook();
+  wb2.creator = 'Factory Nine';
+
+  for(const did of DISPS){
+    const meta = DISP_COV[did];
+    const ws2 = wb2.addWorksheet(meta.label);
+    ws2.columns = [
+      {key:'prod',width:40},{key:'fam',width:22},
+      ...STORES.map(s=>({key:s,width:10})),
+      {key:'total',width:9}
+    ];
+
+    const thinB = {style:'thin',color:{argb:'FFE2E0D8'}};
+    const allB = {top:thinB,bottom:thinB,left:thinB,right:thinB};
+
+    const hr = ws2.addRow(['Producto','Familia',...STORES,'TOTAL']);
+    hr.height=20;
+    hr.eachCell(c=>{
+      c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1A7A5E'}};
+      c.font={bold:true,color:{argb:'FFFFFFFF'},size:10};
+      c.alignment={horizontal:'right',vertical:'middle'};
+    });
+    hr.getCell(1).alignment={horizontal:'left',vertical:'middle'};
+    hr.getCell(2).alignment={horizontal:'left',vertical:'middle'};
+
+    let prevFam=null; let ri=0;
+    for(const p of PRODUCTS){
+      if(p.familia!==prevFam){
+        if(prevFam!==null){
+          const fp=PRODUCTS.filter(pp=>pp.familia===prevFam);
+          const fv=STORES.map(s=>fp.reduce((a,pp)=>a+(ed[did][pp.name]?.[s]||0),0));
+          const ft=fv.reduce((a,b)=>a+b,0);
+          const fr=ws2.addRow(['● '+prevFam,'',...fv,ft]);
+          fr.height=15;
+          fr.eachCell((c,ci)=>{
+            c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0EFEB'}};
+            c.font={bold:true,size:10,color:{argb:ci>2?'FF1A7A5E':'FF1A1A18'}};
+            c.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+            c.border=allB;
+          });
+        }
+        prevFam=p.familia;
+      }
+      const vals=STORES.map(s=>ed[did][p.name]?.[s]||0);
+      const tot=vals.reduce((a,b)=>a+b,0);
+      const pr=ws2.addRow([p.name,p.familia,...vals,tot]);
+      pr.height=15; ri++;
+      pr.eachCell((c,ci)=>{
+        if(ri%2===0) c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8F7F3'}};
+        c.font={size:10,color:{argb:ci===pr.cellCount?'FF1A7A5E':'FF1A1A18'}};
+        c.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+        c.border=allB;
+        if(ci===pr.cellCount) c.font.bold=true;
+      });
+    }
+    // Last family
+    if(prevFam){
+      const fp=PRODUCTS.filter(pp=>pp.familia===prevFam);
+      const fv=STORES.map(s=>fp.reduce((a,pp)=>a+(ed[did][pp.name]?.[s]||0),0));
+      const ft=fv.reduce((a,b)=>a+b,0);
+      const fr=ws2.addRow(['● '+prevFam,'',...fv,ft]);
+      fr.height=15;
+      fr.eachCell((c,ci)=>{
+        c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0EFEB'}};
+        c.font={bold:true,size:10,color:{argb:ci>2?'FF1A7A5E':'FF1A1A18'}};
+        c.alignment={horizontal:ci<=2?'left':'right',vertical:'middle'};
+        c.border=allB;
+      });
+    }
+    // Total
+    const gv=STORES.map(s=>PRODUCTS.reduce((a,p)=>a+(ed[did][p.name]?.[s]||0),0));
+    const gt=gv.reduce((a,b)=>a+b,0);
+    const tr=ws2.addRow(['TOTAL','',...gv,gt]);
+    tr.height=18;
+    tr.eachCell(c=>{
+      c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1A7A5E'}};
+      c.font={bold:true,size:10,color:{argb:'FFFFFFFF'}};
+      c.alignment={horizontal:'right',vertical:'middle'};
+      c.border={top:{style:'medium',color:{argb:'FF9A9A92'}}};
+    });
+    tr.getCell(1).alignment={horizontal:'left',vertical:'middle'};
+    ws2.views=[{state:'frozen',ySplit:1,activeCell:'A2'}];
+
+    // Add coverage info in first row comment
+    ws2.getRow(1).getCell(1).note = `Cobertura: ${meta.label} = ${Math.round(meta.cov*100)}% acumulado (+${Math.round((meta.cov-meta.prev)*100)}% incremental)`;
+  }
+
+  const buf=await wb2.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='Estimado_Despachos_DP2026.xlsx';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('✓ Excel exportado — 3 solapas (Vie AM / Vie PM / Sáb AM)');
+}
+
+function downloadEstDespachoCSV(){
+  const ed = calcEstDespacho();
+  const DISPS = ['vie_am','vie_pm','sat'];
+  const lines = [['Despacho','Producto','Familia',...STORES,'TOTAL'].join(',')];
+  for(const did of DISPS){
+    for(const p of PRODUCTS){
+      const vals = STORES.map(s=>ed[did][p.name]?.[s]||0);
+      const tot = vals.reduce((a,b)=>a+b,0);
+      lines.push([`"${DISP_COV[did].label}"`,`"${p.name}"`,`"${p.familia}"`,...vals,tot].join(','));
+    }
+  }
+  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='Estimado_Despachos_DP2026.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('✓ CSV exportado');
+}
+
+// ════════════════════════
 // NAV
 // ════════════════════════
 function gotoTab(id, el){
@@ -1032,6 +1488,7 @@ function gotoTab(id, el){
   document.getElementById('page-'+id).style.display='block';
   el.classList.add('active');
   if(id==='est-prod') renderEstProd();
+  if(id==='est-despacho') renderEstDespacho();
 }
 
 // ════════════════════════
