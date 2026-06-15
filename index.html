@@ -397,8 +397,13 @@ tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left
         <div class="page-title">Estimado × Despacho</div>
         <div class="page-sub">Demanda por día según patrón familiar · Cobertura aplicada por día · Redondeado al múltiplo</div>
       </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <button class="btn btn-success btn-sm" onclick="downloadEstDespacho()">↓ Descargar Excel</button>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <button class="btn day-btn active" id="ed-btn-all"    onclick="setEdDay('all',this)">Consolidado</button>
+        <button class="btn day-btn"         id="ed-btn-vie_am" onclick="setEdDay('vie_am',this)">Viernes AM</button>
+        <button class="btn day-btn"         id="ed-btn-vie_pm" onclick="setEdDay('vie_pm',this)">Viernes PM</button>
+        <button class="btn day-btn"         id="ed-btn-sat"    onclick="setEdDay('sat',this)">Sábado AM</button>
+        <div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>
+        <button class="btn btn-success btn-sm" onclick="downloadEstDespacho()">↓ Excel</button>
         <button class="btn btn-sm" onclick="downloadEstDespachoCSV()">↓ CSV</button>
       </div>
     </div>
@@ -428,7 +433,7 @@ tr.row-grand td:first-child{text-align:left;font-family:var(--sans);padding-left
     </div>
 
     <div class="card">
-      <div class="card-head">Desglose por producto y despacho</div>
+      <div class="card-head" id="edCardHead">Consolidado — todos los despachos</div>
       <div class="card-body" id="estDespachoTable"></div>
     </div>
   </div>
@@ -1244,15 +1249,32 @@ function calcEstDespacho(){
   return result;
 }
 
+let currentEdDay = 'all';
+
+function setEdDay(day, el){
+  currentEdDay = day;
+  document.querySelectorAll('[id^="ed-btn-"]').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderEstDespacho();
+}
+
 function renderEstDespacho(){
   const ed = calcEstDespacho();
   
+  // Update card head
+  const edHeadEl = document.getElementById('edCardHead');
+  if(edHeadEl){
+    const labels = {all:'Consolidado — todos los despachos', vie_am:'Viernes AM · 100% Vie + 80% Sáb', vie_pm:'Viernes PM · 100% Vie + 100% Sáb + 30% Dom', sat:'Sábado AM · 100% Sáb + 100% Dom'};
+    edHeadEl.textContent = labels[currentEdDay] || '';
+  }
+
   // KPI total
   const total = PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(p.wknd[s]||0),0),0);
   const el = document.getElementById('edTotalUnits');
   if(el) el.textContent = total.toLocaleString('es-CL');
 
-  const DISPS = ['vie_am','vie_pm','sat'];
+  const ALL_DISPS = ['vie_am','vie_pm','sat'];
+  const DISPS = currentEdDay === 'all' ? ALL_DISPS : [currentEdDay];
   const BADGE_STYLE = {
     vie_am: 'background:var(--badge-a-bg);color:var(--badge-a-fg)',
     vie_pm: 'background:var(--badge-b-bg);color:var(--badge-b-fg)',
@@ -1456,14 +1478,15 @@ async function downloadEstDespacho(){
   const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='Estimado_Despachos_DP2026.xlsx';
+  const edFn = currentEdDay==='all'?'Estimado_Despachos_DP2026':'Estimado_'+DISP_COV[currentEdDay]?.label.replace(' ','_')+'_DP2026';
+  a.download=edFn+'.xlsx';
   a.click(); URL.revokeObjectURL(a.href);
   toast('✓ Excel exportado — 3 solapas (Vie AM / Vie PM / Sáb AM)');
 }
 
 function downloadEstDespachoCSV(){
   const ed = calcEstDespacho();
-  const DISPS = ['vie_am','vie_pm','sat'];
+  const DISPS = currentEdDay==='all'?['vie_am','vie_pm','sat']:[currentEdDay];
   const lines = [['Despacho','Producto','Familia',...STORES,'TOTAL'].join(',')];
   for(const did of DISPS){
     for(const p of PRODUCTS){
@@ -1474,7 +1497,7 @@ function downloadEstDespachoCSV(){
   }
   const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
-  a.download='Estimado_Despachos_DP2026.csv';
+  a.download=(currentEdDay==='all'?'Estimado_Despachos_DP2026':'Estimado_'+(DISP_COV[currentEdDay]?.label.replace(' ','_')||currentEdDay)+'_DP2026')+'.csv';
   a.click(); URL.revokeObjectURL(a.href);
   toast('✓ CSV exportado');
 }
