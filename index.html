@@ -1224,11 +1224,13 @@ const DISP_COV = {
 
 function ceilMult(v, m){ return v<=0 ? 0 : Math.ceil(v/m)*m; }
 
+function floorMult(v,m){ return v<=0?0:Math.floor(v/m)*m; }
+
 function calcEstDespacho(){
-  // Each dispatch is INCREMENTAL (not cumulative):
-  // Vie AM  = 100% Vie + 80% Sáb
-  // Vie PM  = 20% Sáb (remaining) + 30% Dom
-  // Sáb AM  = 70% Dom (remaining)
+  // INCREMENTAL — sum of 3 dispatches = pedido wknd exactly:
+  // Vie AM = ceil(100% Vie + 80% Sáb, mult)
+  // Vie PM = ceil(20% Sáb + 30% Dom, mult)
+  // Sáb AM = floor(wknd - vie_am - vie_pm, mult)  ← remainder, closes the total
   const result = {vie_am:{}, vie_pm:{}, sat:{}};
   for(const p of PRODUCTS){
     const pat = DAY_PAT[p.familia] || {fri:0.333,sat:0.333,dom:0.334};
@@ -1236,13 +1238,16 @@ function calcEstDespacho(){
     result.vie_pm[p.name] = {};
     result.sat[p.name]    = {};
     for(const s of STORES){
-      const w = p.wknd[s] || 0;
+      const w   = p.wknd[s] || 0;
       const vie = w * pat.fri;
       const sat = w * pat.sat;
       const dom = w * pat.dom;
-      result.vie_am[p.name][s] = ceilMult(1.00*vie + 0.80*sat,          p.mult);
-      result.vie_pm[p.name][s] = ceilMult(0.20*sat + 0.30*dom,          p.mult);
-      result.sat[p.name][s]    = ceilMult(0.70*dom,                      p.mult);
+      const am  = ceilMult(1.00*vie + 0.80*sat, p.mult);
+      const pm  = ceilMult(0.20*sat + 0.30*dom, p.mult);
+      const sa  = floorMult(Math.max(0, w - am - pm), p.mult);
+      result.vie_am[p.name][s] = am;
+      result.vie_pm[p.name][s] = pm;
+      result.sat[p.name][s]    = sa;
     }
   }
   return result;
@@ -1297,7 +1302,7 @@ function renderEstDespacho(){
         </span>
         ${DISP_COV[d].label}
       </th>`).join('');
-    h += `<th style="min-width:80px;color:var(--green);text-align:right">Total Wknd</th>`;
+    h += `<th style="min-width:80px;color:var(--green);text-align:right">Total<br>Despachos</th>`;
   } else {
     h += STORES.map(s=>`<th style="min-width:58px;text-align:right;font-size:10px">${s.split(' ').pop()}</th>`).join('');
     h += `<th style="min-width:65px;color:var(--green);text-align:right">TOTAL</th>`;
@@ -1316,7 +1321,7 @@ function renderEstDespacho(){
             const v=fp.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(ed[d][pp.name]?.[s]||0),0),0);
             h+=`<td style="font-weight:600;text-align:right">${v||''}</td>`;
           });
-          wkndFam = fp.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(pp.wknd[s]||0),0),0);
+          wkndFam = ALL_DISPS.reduce((sum,d)=>sum+fp.reduce((a,pp)=>a+STORES.reduce((b,s)=>b+(ed[d][pp.name]?.[s]||0),0),0),0);
           h+=`<td style="font-weight:700;color:var(--green);text-align:right">${wkndFam}</td>`;
         } else {
           const d=currentEdDay;
@@ -1335,11 +1340,13 @@ function renderEstDespacho(){
     h += `<tr><td style="padding-left:20px">${p.name}</td><td style="color:var(--text3)">${p.familia}</td>`;
     if(isAll){
       let wkndTot = STORES.reduce((a,s)=>a+(p.wknd[s]||0),0);
+      let dispSum=0;
       ALL_DISPS.forEach(d=>{
         const v=STORES.reduce((a,s)=>a+(ed[d][p.name]?.[s]||0),0);
+        dispSum+=v;
         h+=`<td style="text-align:right">${v||''}</td>`;
       });
-      h+=`<td style="font-weight:600;color:var(--green);text-align:right">${wkndTot||''}</td>`;
+      h+=`<td style="font-weight:600;color:var(--green);text-align:right">${dispSum||''}</td>`;
     } else {
       const d=currentEdDay;
       STORES.forEach(s=>{ h+=`<td style="text-align:right">${ed[d][p.name]?.[s]||''}</td>`; });
@@ -1375,11 +1382,13 @@ function renderEstDespacho(){
   // Grand total
   h += `<tr class="total-row"><td colspan="2">TOTAL</td>`;
   if(isAll){
+    let gtSum=0;
     ALL_DISPS.forEach(d=>{
       const v=PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(ed[d][p.name]?.[s]||0),0),0);
+      gtSum+=v;
       h+=`<td style="text-align:right">${v}</td>`;
     });
-    h+=`<td style="text-align:right">${PRODUCTS.reduce((a,p)=>a+STORES.reduce((b,s)=>b+(p.wknd[s]||0),0),0)}</td>`;
+    h+=`<td style="text-align:right">${gtSum}</td>`;
   } else {
     const d=currentEdDay;
     STORES.forEach(s=>{
