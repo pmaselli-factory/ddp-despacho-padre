@@ -782,7 +782,15 @@ function gotoTab(id,el){
 }
 
 // ── INIT ──
-window.addEventListener('load',()=>{ calcDispatch(); updateStatus(); });
+window.addEventListener('load',()=>{
+  document.getElementById('tableScroll').innerHTML =
+    '<div style="padding:60px;text-align:center;color:var(--text3)">' +
+    '<div style="font-size:28px;margin-bottom:12px">📂</div>' +
+    '<div style="font-size:14px;font-weight:600;color:var(--text2);margin-bottom:6px">Cargá el archivo SOH para calcular los despachos</div>' +
+    '<div style="font-size:12px">El archivo incluye stock de tiendas y Bodega Vía Láctea (planta)</div>' +
+    '</div>';
+  updateStatus();
+});
 
 </script>
 </body>
