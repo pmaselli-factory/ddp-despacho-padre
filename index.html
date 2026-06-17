@@ -143,15 +143,15 @@ tr.row-grand td:first-child{text-align:left;padding-left:14px}
     <span style="font-size:11px;color:var(--text3);font-weight:500;margin-right:4px">DESPACHO</span>
     <div class="d-btn active" id="dbtn-vie_am" onclick="selectDispatch('vie_am')">
       <div class="d-btn-name"><span style="background:var(--badge-a-bg);color:var(--badge-a-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">A</span> Viernes AM</div>
-      <div class="d-btn-sub">100% Vie + 80% Sáb</div>
+      <div class="d-btn-sub">Tipo A/B: 100% Vie + 80% Sáb · Tipo C: 50% wknd</div>
     </div>
     <div class="d-btn" id="dbtn-vie_pm" onclick="selectDispatch('vie_pm')">
       <div class="d-btn-name"><span style="background:var(--badge-b-bg);color:var(--badge-b-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">B</span> Viernes PM</div>
-      <div class="d-btn-sub">20% Sáb + 30% Dom</div>
+      <div class="d-btn-sub">Solo Tipo A/B: 20% Sáb + 30% Dom</div>
     </div>
     <div class="d-btn" id="dbtn-sat" onclick="selectDispatch('sat')">
       <div class="d-btn-name"><span style="background:var(--badge-c-bg);color:var(--badge-c-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">C</span> Sábado AM</div>
-      <div class="d-btn-sub">70% Dom (Tipo A/B) · 50% wknd (Tipo C)</div>
+      <div class="d-btn-sub">Tipo A/B: 70% Dom · Tipo C: 50% wknd</div>
     </div>
     <div style="flex:1"></div>
     <span style="font-size:11px;color:var(--text3)" id="covInfo">Cobertura: <strong>70%</strong></span>
@@ -221,11 +221,11 @@ tr.row-grand td:first-child{text-align:left;padding-left:14px}
     <div class="kpi-row">
       <div class="kpi" style="min-width:160px;flex:1">
         <div class="kpi-label"><span style="background:var(--badge-a-bg);color:var(--badge-a-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">A</span> Viernes AM</div>
-        <div class="kpi-val" style="font-size:16px;line-height:1.3">100% Vie + 80% Sáb<br><span style="font-size:12px;color:var(--text3)">Tipo C: 50% wknd</span></div>
+        <div class="kpi-val" style="font-size:16px;line-height:1.3">Tipo A/B: 100% Vie + 80% Sáb<br>Tipo C: 50% wknd</div>
       </div>
       <div class="kpi" style="min-width:160px;flex:1">
         <div class="kpi-label"><span style="background:var(--badge-b-bg);color:var(--badge-b-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">B</span> Viernes PM</div>
-        <div class="kpi-val" style="font-size:16px;line-height:1.3">20% Sáb + 30% Dom<br><span style="font-size:12px;color:var(--text3)">Tipo C: 0</span></div>
+        <div class="kpi-val" style="font-size:16px;line-height:1.3">Tipo A/B: 20% Sáb + 30% Dom<br>Tipo C: no se despacha</div>
       </div>
       <div class="kpi" style="min-width:160px;flex:1">
         <div class="kpi-label"><span style="background:var(--badge-c-bg);color:var(--badge-c-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">C</span> Sábado AM</div>
