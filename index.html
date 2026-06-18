@@ -307,8 +307,8 @@ function prevDispatched(prod,store,did){
   return t;
 }
 function calcProduct(p,did){
-  // Type C Vie AM: fixed quantities, ignore SOH
-  if(p.typeC && did==='vie_am' && FIXED_TYPE_C[p.name]){
+  // Vie AM: use fixed quantities for any product in FIXED_TYPE_C
+  if(did==='vie_am' && FIXED_TYPE_C[p.name]){
     const result=Object.fromEntries(STORES.map(s=>[s,FIXED_TYPE_C[p.name][s]||0]));
     return {result, constrained:false};
   }
@@ -676,8 +676,8 @@ function calcEstDespacho(){
     for(const s of STORES){
       const w=p.wknd[s]||0;
       let am,pm,sa;
-      if(p.typeC){
-        // Type C Vie AM: fixed quantities from FIXED_TYPE_C
+      if(FIXED_TYPE_C[p.name]){
+        // Vie AM: fixed quantities for products in FIXED_TYPE_C (Tipo C + Oreo Mix Bar)
         am = FIXED_TYPE_C[p.name]?.[s] || 0;
         // Type C Vie PM: 35% of wknd (subject to SOH in dispatch tab)
         pm = ceilMult(0.35*w, p.mult);
