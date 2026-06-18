@@ -307,10 +307,14 @@ function prevDispatched(prod,store,did){
   return t;
 }
 function calcProduct(p,did){
-  // Vie AM: use fixed quantities for any product in FIXED_TYPE_C
+  // Vie AM: fixed quantities for products in FIXED_TYPE_C; 0 for other typeC products
   if(did==='vie_am' && FIXED_TYPE_C[p.name]){
     const result=Object.fromEntries(STORES.map(s=>[s,FIXED_TYPE_C[p.name][s]||0]));
     return {result, constrained:false};
+  }
+  if(did==='vie_am' && p.typeC){
+    // typeC not in FIXED_TYPE_C: no stock today, dispatch 0
+    return {result:Object.fromEntries(STORES.map(s=>[s,0])), constrained:false};
   }
   const cov=parseFloat(document.getElementById('covOverride').value)||DISPATCH_META[did].cov;
   const plantAvail=plantStock[p.name]??Infinity;
@@ -677,12 +681,15 @@ function calcEstDespacho(){
       const w=p.wknd[s]||0;
       let am,pm,sa;
       if(FIXED_TYPE_C[p.name]){
-        // Vie AM: fixed quantities for products in FIXED_TYPE_C (Tipo C + Oreo Mix Bar)
+        // Vie AM: fixed quantities
         am = FIXED_TYPE_C[p.name]?.[s] || 0;
-        // Type C Vie PM: 35% of wknd (subject to SOH in dispatch tab)
         pm = ceilMult(0.35*w, p.mult);
-        // Type C Sáb AM: remainder
         sa = floorMult(Math.max(0, w - am - pm), p.mult);
+      } else if(p.typeC){
+        // typeC not in FIXED_TYPE_C (Queque Chocolate, Plátano): 0 Vie AM, split rest
+        am = 0;
+        pm = ceilMult(0.50*w, p.mult);
+        sa = floorMult(Math.max(0, w - pm), p.mult);
       } else {
         const vie=w*pat.fri;const sat=w*pat.sat;const dom=w*pat.dom;
         am=ceilMult(1.00*vie+0.80*sat,p.mult);
