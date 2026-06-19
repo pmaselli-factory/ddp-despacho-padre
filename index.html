@@ -609,11 +609,13 @@ function parseSohFile(file){
         for(const[store,prods]of Object.entries(storeAcc)){for(const[prod,qty]of Object.entries(prods)){if(!newStore[prod])newStore[prod]={};newStore[prod][store]=Math.floor(qty);}}
         for(const p of Object.keys(newPlant))newPlant[p]=Math.floor(newPlant[p]);
         console.log('SOH parsed:',{storeProds:Object.keys(newStore).length,plantProds:Object.keys(newPlant).length});
-        // Debug: log S/A products specifically
-        const saProds=['Trozo Tor S/A Carrot Cake','Trozo Tor S/A Chocolate','Mediana Tor S/A Carrot Cake','Mediana Tor S/A Chocolate','Trozo Tor Carrot Cake','Grande Tor Dark Cake'];
-        for(const sp of saProds){
-          console.log(`  ${sp}: plant=${newPlant[sp]??'NOT FOUND'}, stores=${JSON.stringify(Object.fromEntries(Object.entries(newStore[sp]||{}).filter(([,v])=>v>0)))}`);
+        // Debug TC and S/A products
+        const debugProds=['Trozo Ch Triple Chocolate','Mediano Ch Triple Chocolate','Grande Ch Triple Chocolate','Trozo Tor S/A Carrot Cake','Trozo Tor Carrot Cake'];
+        for(const sp of debugProds){
+          console.log(`  ${sp}: plant=${newPlant[sp]??'NOT FOUND'}, storeTotal=${Object.values(newStore[sp]||{}).reduce((a,b)=>a+b,0)}`);
         }
+        // Also log raw DEC lookup for TC
+        console.log('DEC_MAP TC check:', DEC_MAP['DEC TROZ CH TRIPLE CHOCOLATE'], DEC_MAP['DEC TROZ CH TRIPLE CHOCOLATE (PA)']);
         // Extract sauce stock (kg) from newStore
 const newSauceStore={};
 const newSaucePlant={};
