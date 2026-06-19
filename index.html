@@ -404,11 +404,7 @@ function calcSauces(did){
 }
 
 // ── DISPATCH CALC ──
-function prevDispatched(prod,store,did){
-  let t=0;
-  for(const d of DISPATCH_ORDER){ if(d===did) break; t+=dispatch[d][prod]?.[store]||0; }
-  return t;
-}
+// prevDispatched removed: each dispatch is independent of the others
 function calcProduct(p,did){
   // Vie AM: fixed quantities for products in FIXED_TYPE_C; 0 for other typeC products
   if(did==='vie_am' && FIXED_TYPE_C[p.name]){
@@ -421,15 +417,16 @@ function calcProduct(p,did){
   }
   // Tipo C en Vie PM y Sáb AM: usa SOH real de tiendas y planta (ya no cantidades fijas)
   if(p.typeC && (did==='vie_pm'||did==='sat')){
-    const plantAvail=plantStock[p.name]??Infinity;
+    // Si plantStock=0, usar Infinity (el SOH decorado de typeC es 0 porque se produce diario)
+    const rawPlant=plantStock[p.name];
+    const plantAvail=(rawPlant===undefined||rawPlant===0)?Infinity:rawPlant;
     const result={};
     const needs={};let totalNeed=0;
     for(const s of STORES){
       const w=p.wknd[s]||0;
       const soh=storeStock[p.name]?.[s]??0;
-      const prev=prevDispatched(p.name,s,did);
-      // For typeC: needs = remaining wknd demand - store SOH - already dispatched
-      needs[s]=Math.max(0,w-soh-prev);
+      // For typeC: needs = remaining wknd demand - store SOH (independent of other dispatches)
+      needs[s]=Math.max(0,w-soh);
       totalNeed+=needs[s];
     }
     if(totalNeed===0) return {result:Object.fromEntries(STORES.map(s=>[s,0])),constrained:false};
@@ -479,8 +476,8 @@ function calcProduct(p,did){
   for(const s of STORES){
     const w=p.wknd[s]||0;
     const soh=storeStock[p.name]?.[s]??0;
-    const prev=prevDispatched(p.name,s,did);
-    needs[s]=Math.max(0,w*cov-soh-prev);
+    // Each dispatch is independent: needs = wknd*cov - storeSOH
+    needs[s]=Math.max(0,w*cov-soh);
     totalNeed+=needs[s];
   }
   if(totalNeed===0) return {result:Object.fromEntries(STORES.map(s=>[s,0])),constrained:false};
