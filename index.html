@@ -682,7 +682,7 @@ function buildRows(did){
   const sauces=calcSauces(did);
   for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalSendKg,totalPotes}=sData;const totalKg=totalSendKg;
     rows.push({tipo:'SAL',pos:'',num:'',art:sauce,
-      plant:totalPotes+' potes ('+totalKg.toFixed(1)+' kg)',
+      plant:'Stock: '+plantKg.toFixed(0)+'kg ('+Math.floor(plantKg/POTE_KG)+' potes)',
       stores:storePotes,total:totalPotes,
       isSauce:true});
   }
