@@ -328,39 +328,32 @@ const SAUCE_CONFIG = {
 };
 const POTE_KG = 2; // kg per pote
 function calcSauces(did){
-  // Everything in POTES (1 pote = 2 kg)
-  // need_potes per store = ceil(cheesecakes_in_store * kg_per_unit / POTE_KG)
-  // soh_potes per store  = floor(sauce_kg_in_store / POTE_KG)
-  // send_potes per store = max(0, need_potes - soh_potes)
-  // plant_potes          = floor(sauce_kg_in_plant / POTE_KG)
+  // Per store: potes = ceil(max(0, kg_needed - kg_soh) / POTE_KG)
+  // Total = sum of potes per store
+  // Plant in potes = floor(plant_kg / POTE_KG)
   const result={};
   for(const [sauce, items] of Object.entries(SAUCE_CONFIG)){
+    // kg needed per store from cheesecake SOH
     const storeNeedKg={};
     for(const s of STORES) storeNeedKg[s]=0;
     for(const {prod,kg} of items){
       const cheeseSOH=storeStock[prod]||{};
-      for(const s of STORES) storeNeedKg[s]+=(cheeseSOH[s]||0)*kg;
+      for(const s of STORES) storeNeedKg[s]+=Math.round((cheeseSOH[s]||0)*kg*100)/100;
     }
-    // Convert everything to potes
+    // sauce SOH per store in kg
     const storeSohKg=sauceStoreStock[sauce]||{};
-    const storeNeedPotes={};
-    const storeSohPotes={};
-    const storeSendPotes={};
+    // potes per store = ceil(max(0, need_kg - soh_kg) / 2)
+    const storePotes={};
+    const storeSendKg={};
     for(const s of STORES){
-      storeNeedPotes[s]=Math.ceil(storeNeedKg[s]/POTE_KG);
-      storeSohPotes[s]=Math.floor((storeSohKg[s]||0)/POTE_KG);
-      storeSendPotes[s]=Math.max(0, storeNeedPotes[s]-storeSohPotes[s]);
+      storeSendKg[s]=Math.max(0, storeNeedKg[s]-(storeSohKg[s]||0));
+      storePotes[s]=Math.ceil(storeSendKg[s]/POTE_KG);
     }
-    const totalNeedPotes=Object.values(storeNeedPotes).reduce((a,b)=>a+b,0);
-    const totalSendPotes=Object.values(storeSendPotes).reduce((a,b)=>a+b,0);
+    const totalNeedKg=Object.values(storeNeedKg).reduce((a,b)=>a+b,0);
+    const totalSendKg=Object.values(storeSendKg).reduce((a,b)=>a+b,0);
+    const totalPotes=Object.values(storePotes).reduce((a,b)=>a+b,0);
     const plantPotes=Math.floor((saucePlantStock[sauce]||0)/POTE_KG);
-    result[sauce]={
-      storePotes:storeSendPotes,
-      storeSohPotes,storeNeedPotes,
-      totalPotes:totalSendPotes,
-      totalNeedPotes,
-      plantPotes
-    };
+    result[sauce]={storeNeedKg,storeSendKg,storeSohKg,storePotes,totalNeedKg,totalSendKg,totalPotes,plantPotes};
   }
   return result;
 }
@@ -523,11 +516,11 @@ function renderTable(){
   </tr>`;
   // Sauce rows
   const sauces=calcSauces(did);
-  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalPotes}=sData;
+  for(const [sauce,sData] of Object.entries(sauces)){
     h+=`<tr style="background:var(--blue-bg);border-top:2px solid var(--border2)">
       <td colspan="2" style="padding-left:14px;color:var(--blue);font-weight:600">🫙 ${sauce}</td>
-      <td style="color:var(--text3);font-size:11px">${sData.totalNeedPotes} potes necesarios</td>
-      ${STORES.map(s=>`<td style="color:var(--blue);text-align:right;font-weight:500" title="Necesita: ${sData.storeNeedPotes[s]} · SOH: ${sData.storeSohPotes[s]} potes">${sData.storePotes[s]||''}</td>`).join('')}
+      <td style="color:var(--text3);font-size:11px">${sData.totalNeedKg.toFixed(1)} kg / ${sData.totalPotes} potes</td>
+      ${STORES.map(s=>`<td style="color:var(--blue);text-align:right;font-weight:500" title="Necesita: ${sData.storeNeedKg[s].toFixed(2)}kg · SOH: ${(sData.storeSohKg[s]||0).toFixed(2)}kg · A enviar: ${sData.storeSendKg[s].toFixed(2)}kg">${sData.storePotes[s]||''}</td>`).join('')}
       <td style="color:var(--blue);font-weight:700;text-align:right">${sData.totalPotes} potes</td>
       <td style="color:var(--blue);font-size:11px;text-align:right">${sData.plantPotes} potes</td>
     </tr>`;
@@ -688,10 +681,11 @@ function buildRows(did){
   rows.push({tipo:'',pos:'',num:'',art:'TOTAL',plant:gtPlant,stores:gt,total:Object.values(gt).reduce((a,b)=>a+b,0),isTotal:true});
   // Add sauce rows
   const sauces=calcSauces(did);
-  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalPotes}=sData;
+  for(const [sauce,sData] of Object.entries(sauces)){
     rows.push({tipo:'SAL',pos:'',num:'',art:sauce,
       plant:sData.plantPotes+' potes',
-      stores:storePotes,total:totalPotes,
+      stores:sData.storePotes,
+      total:sData.totalPotes,
       isSauce:true});
   }
   return rows;
