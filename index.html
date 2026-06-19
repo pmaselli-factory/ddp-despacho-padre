@@ -336,6 +336,8 @@ let storeStock = {};
 let sauceStoreStock = {}; // kg per store: {'Salsa NY Berries': {store: kg}}
 let saucePlantStock = {}; // kg in planta: {'Salsa NY Berries': kg}
 let plantStock = {};
+let satPlantStock = {};
+let satStockLoaded = false;
 let dispatch = {vie_am:{}, vie_pm:{}, sat:{}};
 let overrides = {};
 let constrained = {};
@@ -415,10 +417,12 @@ function calcProduct(p,did){
     // typeC not in FIXED_TYPE_C: no stock today, dispatch 0
     return {result:Object.fromEntries(STORES.map(s=>[s,0])), constrained:false};
   }
+  // Sáb AM usa satPlantStock (Stock_VL.xlsx) si está cargado; sino, plantStock del SOH
+  const effectivePlantStock = (did==='sat' && satStockLoaded) ? satPlantStock : plantStock;
   // Tipo C en Vie PM y Sáb AM: usa SOH real de tiendas y planta (ya no cantidades fijas)
   if(p.typeC && (did==='vie_pm'||did==='sat')){
     // plantAvail: undefined=Infinity (no constraint), 0=no stock, N=hard cap
-    const plantAvail=plantStock[p.name]??Infinity;
+    const plantAvail=effectivePlantStock[p.name]??Infinity;
     const result={};
     const needs={};let totalNeed=0;
     for(const s of STORES){
@@ -462,13 +466,13 @@ function calcProduct(p,did){
   let plantAvail;
   if(myGroup){
     const first=myGroup[0];
-    const fullPool=plantStock[first]??Infinity;
+    const fullPool=effectivePlantStock[first]??Infinity;
     // Subtract what siblings before me already dispatched this round
     const sibUsed=myGroup.filter(sib=>sib!==p.name)
       .reduce((a,sib)=>a+STORES.reduce((b,s)=>b+(dispatch[did][sib]?.[s]||0),0),0);
     plantAvail=fullPool===Infinity?Infinity:Math.max(0,fullPool-sibUsed);
   } else {
-    plantAvail=plantStock[p.name]??Infinity;
+    plantAvail=effectivePlantStock[p.name]??Infinity;
   }
   const needs={};
   let totalNeed=0;
@@ -626,6 +630,9 @@ function clearOverrides(){overrides[currentDispatch]={};calcDispatch();toast('Aj
 // ── DISPATCH SELECTOR ──
 function selectDispatch(did){
   currentDispatch=did;
+  // Show Stock Sáb AM upload button only on sat tab
+  const satBtn=document.getElementById('btnLoadSatStock');
+  if(satBtn) satBtn.style.display=did==='sat'?'':'none';
   document.querySelectorAll('.d-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('dbtn-'+did).classList.add('active');
   document.getElementById('st-did').textContent=DISPATCH_META[did].label;
@@ -1126,6 +1133,42 @@ function renderDeltaSoh(){
   h+=`<tr class="total-row"><td colspan="2">TOTAL</td>${STORES.map(s=>{const v=gt[s];return `<td style="text-align:right;${v>0?'color:#b45309':v<0?'color:var(--green)':''}">${v>0?'+'+v:v===0?'—':v}</td>`;}).join('')}<td style="text-align:right;${gcol}">${gtot>0?'+'+gtot:gtot===0?'—':gtot}</td></tr>`;
   h+='</tbody></table>';
   body.innerHTML=h;
+}
+
+
+// ── SAT PLANT STOCK (Stock_VL.xlsx) ──
+function loadSatStock(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
+    satPlantStock={};
+    for(const row of rows){
+      const decName=row[1]?String(row[1]).trim():null;
+      const qty=row[2];
+      if(!decName||qty===null||qty===undefined) continue;
+      // Try exact match then with (PA) suffix
+      const mapping=DEC_MAP[decName]||DEC_MAP[decName+' (PA)'];
+      if(!mapping) continue;
+      const prods=Array.isArray(mapping)?mapping:[mapping];
+      const share=Math.floor((parseFloat(qty)||0));
+      if(prods.length>1){
+        // NY NEUTRO pool: store total under first product
+        satPlantStock[prods[0]]=(satPlantStock[prods[0]]||0)+share;
+      } else {
+        satPlantStock[prods[0]]=(satPlantStock[prods[0]]||0)+share;
+      }
+    }
+    satStockLoaded=true;
+    const lbl=document.getElementById('sat-stock-status');
+    if(lbl) lbl.textContent=`Stock cargado: ${file.name}`;
+    toast(`✓ ${file.name} cargado para Sáb AM`);
+    if(currentDispatch==='sat') calcDispatch();
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 // ── NAV ──
