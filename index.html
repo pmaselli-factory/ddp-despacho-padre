@@ -734,8 +734,9 @@ async function exportExcel(){
   });
   // Sauce rows
   const sauceData=calcSauces(did);
-  for(const [sauce,{storePotes,totalKg,totalPotes}] of Object.entries(sauceData)){
-    const sr=ws2.addRow(['SAL','','',sauce,totalKg.toFixed(2)+' kg',...STORES.map(s=>storePotes[s]||0),totalPotes]);
+  for(const [sauce,sData] of Object.entries(sauceData)){
+    const {storePotes,totalSendKg,totalPotes,plantKg}=sData;
+    const sr=ws2.addRow(['SAL','','',sauce,totalSendKg.toFixed(2)+' kg',...STORES.map(s=>storePotes[s]||0),totalPotes]);
     sr.height=16;
     sr.eachCell((cell,ci)=>{
       cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFEFF6FF'}};
