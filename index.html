@@ -608,11 +608,6 @@ function parseSohFile(file){
         for(const[store,prods]of Object.entries(storeAcc)){for(const[prod,qty]of Object.entries(prods)){if(!newStore[prod])newStore[prod]={};newStore[prod][store]=Math.floor(qty);}}
         for(const p of Object.keys(newPlant))newPlant[p]=Math.floor(newPlant[p]);
         console.log('SOH parsed:',{storeProds:Object.keys(newStore).length,plantProds:Object.keys(newPlant).length});
-        // Debug: log sauce plant stock
-        console.log('newPlant sauce_berries:', newPlant['__sauce_berries__']);
-        console.log('newPlant sauce_maracuya:', newPlant['__sauce_maracuya__']);
-        console.log('newSaucePlant:', JSON.stringify(newSaucePlant));
-        console.log('TC plant:', newPlant['Trozo Ch Triple Chocolate'], newPlant['Mediano Ch Triple Chocolate']);
         // Extract sauce stock (kg) from newStore
 const newSauceStore={};
 const newSaucePlant={};
