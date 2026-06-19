@@ -328,31 +328,39 @@ const SAUCE_CONFIG = {
 };
 const POTE_KG = 2; // kg per pote
 function calcSauces(did){
-  // Sauce needed = based on cheesecake NY SOH in each store (not dispatch qty)
-  // need_kg per store = sum(soh_cheesecake[store] * kg_per_unit)
-  // send = max(0, need_kg - sauce_soh_kg) rounded up to potes of 2kg
+  // Everything in POTES (1 pote = 2 kg)
+  // need_potes per store = ceil(cheesecakes_in_store * kg_per_unit / POTE_KG)
+  // soh_potes per store  = floor(sauce_kg_in_store / POTE_KG)
+  // send_potes per store = max(0, need_potes - soh_potes)
+  // plant_potes          = floor(sauce_kg_in_plant / POTE_KG)
   const result={};
   for(const [sauce, items] of Object.entries(SAUCE_CONFIG)){
     const storeNeedKg={};
     for(const s of STORES) storeNeedKg[s]=0;
     for(const {prod,kg} of items){
-      // Use SOH of cheesecake in store (units already there)
       const cheeseSOH=storeStock[prod]||{};
       for(const s of STORES) storeNeedKg[s]+=(cheeseSOH[s]||0)*kg;
     }
-    // Subtract sauce already in store
-    const storeSoh=sauceStoreStock[sauce]||{};
-    const storeSendKg={};
+    // Convert everything to potes
+    const storeSohKg=sauceStoreStock[sauce]||{};
+    const storeNeedPotes={};
+    const storeSohPotes={};
+    const storeSendPotes={};
     for(const s of STORES){
-      storeSendKg[s]=Math.max(0, storeNeedKg[s]-(storeSoh[s]||0));
+      storeNeedPotes[s]=Math.ceil(storeNeedKg[s]/POTE_KG);
+      storeSohPotes[s]=Math.floor((storeSohKg[s]||0)/POTE_KG);
+      storeSendPotes[s]=Math.max(0, storeNeedPotes[s]-storeSohPotes[s]);
     }
-    const storePotes={};
-    for(const s of STORES) storePotes[s]=Math.ceil(storeSendKg[s]/POTE_KG);
-    const totalSendKg=Object.values(storeSendKg).reduce((a,b)=>a+b,0);
-    const totalNeedKg=Object.values(storeNeedKg).reduce((a,b)=>a+b,0);
-    const totalPotes=Math.ceil(totalSendKg/POTE_KG);
-    const plantKg=saucePlantStock[sauce]||0;
-    result[sauce]={storePotes,storeSendKg,storeNeedKg,storeSoh,totalSendKg,totalNeedKg,totalPotes,plantKg};
+    const totalNeedPotes=Object.values(storeNeedPotes).reduce((a,b)=>a+b,0);
+    const totalSendPotes=Object.values(storeSendPotes).reduce((a,b)=>a+b,0);
+    const plantPotes=Math.floor((saucePlantStock[sauce]||0)/POTE_KG);
+    result[sauce]={
+      storePotes:storeSendPotes,
+      storeSohPotes,storeNeedPotes,
+      totalPotes:totalSendPotes,
+      totalNeedPotes,
+      plantPotes
+    };
   }
   return result;
 }
@@ -515,13 +523,13 @@ function renderTable(){
   </tr>`;
   // Sauce rows
   const sauces=calcSauces(did);
-  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalSendKg,totalPotes}=sData;const totalKg=totalSendKg;
+  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalPotes}=sData;
     h+=`<tr style="background:var(--blue-bg);border-top:2px solid var(--border2)">
       <td colspan="2" style="padding-left:14px;color:var(--blue);font-weight:600">🫙 ${sauce}</td>
-      <td style="color:var(--text3);font-size:11px" title="Necesidad: ${sData.totalNeedKg.toFixed(1)}kg · Planta: ${sData.plantKg.toFixed(1)}kg">${sData.totalSendKg.toFixed(1)} kg</td>
-      ${STORES.map(s=>`<td style="color:var(--blue);text-align:right;font-weight:500" title="Necesita: ${sData.storeNeedKg[s].toFixed(1)}kg · SOH: ${(sData.storeSoh[s]||0).toFixed(1)}kg">${sData.storePotes[s]||''}</td>`).join('')}
+      <td style="color:var(--text3);font-size:11px">${sData.totalNeedPotes} potes necesarios</td>
+      ${STORES.map(s=>`<td style="color:var(--blue);text-align:right;font-weight:500" title="Necesita: ${sData.storeNeedPotes[s]} · SOH: ${sData.storeSohPotes[s]} potes">${sData.storePotes[s]||''}</td>`).join('')}
       <td style="color:var(--blue);font-weight:700;text-align:right">${sData.totalPotes} potes</td>
-      <td style="color:var(--blue);font-size:11px;text-align:right">${sData.plantKg.toFixed(0)}kg</td>
+      <td style="color:var(--blue);font-size:11px;text-align:right">${sData.plantPotes} potes</td>
     </tr>`;
   }
   h+=`</tbody></table>`;
@@ -680,9 +688,9 @@ function buildRows(did){
   rows.push({tipo:'',pos:'',num:'',art:'TOTAL',plant:gtPlant,stores:gt,total:Object.values(gt).reduce((a,b)=>a+b,0),isTotal:true});
   // Add sauce rows
   const sauces=calcSauces(did);
-  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalSendKg,totalPotes}=sData;const totalKg=totalSendKg;
+  for(const [sauce,sData] of Object.entries(sauces)){ const {storePotes,totalPotes}=sData;
     rows.push({tipo:'SAL',pos:'',num:'',art:sauce,
-      plant:'Stock: '+plantKg.toFixed(0)+'kg ('+Math.floor(plantKg/POTE_KG)+' potes)',
+      plant:sData.plantPotes+' potes',
       stores:storePotes,total:totalPotes,
       isSauce:true});
   }
