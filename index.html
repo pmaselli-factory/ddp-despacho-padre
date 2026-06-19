@@ -328,22 +328,24 @@ const SAUCE_CONFIG = {
 };
 const POTE_KG = 2; // kg per pote
 function calcSauces(did){
-  // Returns {sauceName: {store: potes_to_send, store_soh_kg, need_kg, total_potes, total_kg}}
+  // Sauce needed = based on cheesecake NY SOH in each store (not dispatch qty)
+  // need_kg per store = sum(soh_cheesecake[store] * kg_per_unit)
+  // send = max(0, need_kg - sauce_soh_kg) rounded up to potes of 2kg
   const result={};
   for(const [sauce, items] of Object.entries(SAUCE_CONFIG)){
     const storeNeedKg={};
     for(const s of STORES) storeNeedKg[s]=0;
     for(const {prod,kg} of items){
-      const qty=dispatch[did][prod]||{};
-      for(const s of STORES) storeNeedKg[s]+=(qty[s]||0)*kg;
+      // Use SOH of cheesecake in store (units already there)
+      const cheeseSOH=storeStock[prod]||{};
+      for(const s of STORES) storeNeedKg[s]+=(cheeseSOH[s]||0)*kg;
     }
-    // Subtract store SOH (kg already in store)
+    // Subtract sauce already in store
     const storeSoh=sauceStoreStock[sauce]||{};
     const storeSendKg={};
     for(const s of STORES){
       storeSendKg[s]=Math.max(0, storeNeedKg[s]-(storeSoh[s]||0));
     }
-    // Total to send = potes (each 2kg), ceil per store
     const storePotes={};
     for(const s of STORES) storePotes[s]=Math.ceil(storeSendKg[s]/POTE_KG);
     const totalSendKg=Object.values(storeSendKg).reduce((a,b)=>a+b,0);
