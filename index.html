@@ -799,7 +799,6 @@ function buildRows(did){
 }
 function exportCSV(){
   const did=currentDispatch;
-  if(did==='sat'&&satStockLoaded){const s=currentDispatch;currentDispatch='sat';calcDispatch();currentDispatch=s;}
   const rows=buildRows(did);
   const lines=[['TIPO','Pos','Num.Articulo','Articulo','Planta',...STORES,'TOTAL'].join(',')];
   for(const r of rows.slice(1)){
@@ -815,7 +814,6 @@ function exportCSV(){
 }
 async function exportExcel(){
   const did=currentDispatch;
-  if(did==='sat'&&satStockLoaded){const s=currentDispatch;currentDispatch='sat';calcDispatch();currentDispatch=s;}
   const rows=buildRows(did);
   const date=new Date().toISOString().slice(0,10);
   const dispId=did==='vie_am'?'Vie_AM':did==='vie_pm'?'Vie_PM':'Sab_AM';
@@ -1185,12 +1183,12 @@ function loadSatStock(input){
     satStockLoaded=true;
     const lbl=document.getElementById('sat-stock-status');
     if(lbl) lbl.textContent=`✓ ${file.name}`;
-    // Recalculate sat dispatch with new stock, then re-render if on sat tab
+    // Recalculate sat dispatch with new stock
     const savedDid=currentDispatch;
     currentDispatch='sat';
-    calcDispatch();
-    if(savedDid==='sat') renderTable();
+    calcDispatch(); // this already calls renderTable() internally
     currentDispatch=savedDid;
+    if(savedDid!=='sat') updateStatus(); // refresh status if on different tab
     const total=Object.values(satPlantStock).reduce((a,b)=>a+b,0);
     const prods=Object.values(satPlantStock).filter(v=>v>0).length;
     toast(`✓ ${file.name} — ${prods} prods, ${total} uds`);
