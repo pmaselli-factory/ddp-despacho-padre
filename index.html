@@ -665,6 +665,7 @@ function parseSohFile(file){
         const newStore={};const newPlant={};
         const storeAcc={};
         let currentLoc=null;
+        let plantaDone=false; // once a store is seen, Bodega Via Lactea is no longer planta
         for(const row of rows){
           const c1=row[0]!=null?String(row[0]).trim():'';
           const c2=row[1]!=null?String(row[1]).trim():'';
@@ -675,7 +676,14 @@ function parseSohFile(file){
           const c1IsNum = !isNaN(parseFloat(c1)) && isFinite(c1);
           if(c1 && c2Empty && !c1IsNum){
             const m=LOC_MAP[c1];
-            if(m!==undefined){ currentLoc=m; } // only change loc for known entries
+            if(m!==undefined){
+              if(m==='__planta__' && plantaDone){
+                // Bodega Via Lactea inside a store section — keep store as currentLoc
+              } else {
+                currentLoc=m;
+                if(m!=='__planta__') plantaDone=true; // first store seen
+              }
+            }
             // All other headers (sub-sections, unknown) keep currentLoc unchanged
             continue;
           }
@@ -1149,7 +1157,9 @@ function loadSatStock(input){
     const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
     const ws=wb.Sheets[wb.SheetNames[0]];
     const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null});
+    // Initialize all products to 0 — products absent from file have no stock
     satPlantStock={};
+    for(const p of PRODUCTS) satPlantStock[p.name]=0;
     for(const row of rows){
       const decName=row[1]?String(row[1]).trim():null;
       const qty=row[2];
