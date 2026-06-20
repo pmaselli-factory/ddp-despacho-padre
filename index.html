@@ -427,7 +427,7 @@ function calcProduct(p,did){
   const effectivePlantStock = (did==='sat' && satStockLoaded) ? satPlantStock : plantStock;
   // Tipo C en Vie PM y Sáb AM: usa SOH real de tiendas y planta (ya no cantidades fijas)
   if(p.typeC && (did==='vie_pm'||did==='sat')){
-    // plantAvail: undefined=Infinity (no constraint), 0=no stock, N=hard cap
+    // plantAvail: Stock_VL si está cargado (para todo tipo), sino SOH Bodega VL
     const plantAvail=effectivePlantStock[p.name]??Infinity;
     const result={};
     const needs={};let totalNeed=0;
@@ -767,12 +767,12 @@ function buildRows(did){
   const PROD_TO_DEC={};
   for(const[dec,prod]of Object.entries(DEC_MAP)){if(Array.isArray(prod))for(const p of prod)PROD_TO_DEC[p]=dec;else PROD_TO_DEC[prod]=dec;}
   const decQty={};const decPlant={};
-  const effPlant=(did==='sat'&&satStockLoaded)?satPlantStock:plantStock;
   for(const p of PRODUCTS){
     const dec=PROD_TO_DEC[p.name];if(!dec)continue;
     const qty=dispatch[did][p.name]||{};
     if(!decQty[dec]){decQty[dec]={};for(const s of STORES)decQty[dec][s]=0;}
     for(const s of STORES)decQty[dec][s]+=qty[s]||0;
+    const effPlant=(did==='sat'&&satStockLoaded)?satPlantStock:plantStock;
     const ps=effPlant[p.name];if(ps!==undefined)decPlant[dec]=(decPlant[dec]||0)+ps; // accumulate for shared DECs
   }
   const constProds=constrained[did]||{};const constDecs=new Set();
