@@ -154,6 +154,12 @@ tr.row-grand td:first-child{text-align:left;padding-left:14px}
     <div class="d-btn" id="dbtn-sat" onclick="selectDispatch('sat')">
       <div class="d-btn-name"><span style="background:var(--badge-c-bg);color:var(--badge-c-fg);padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600">C</span> Sábado AM</div>
       <div class="d-btn-sub">Tipo A/B: 70% Dom · Tipo C: SOH real tiendas/planta</div>
+      <div style="margin-top:4px">
+        <label onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;cursor:pointer;background:var(--badge-c-bg);color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px" title="Cargar Stock_VL.xlsx — tope de planta para Sáb AM">
+          ↑ Stock Sáb AM<input type="file" accept=".xlsx" style="display:none" onchange="loadSatStock(this)">
+        </label>
+        <span id="sat-stock-status" style="font-size:10px;color:var(--badge-c-bg);margin-left:4px"></span>
+      </div>
     </div>
     <div style="flex:1"></div>
     <span style="font-size:11px;color:var(--text3)" id="covInfo">Cobertura: <strong>70%</strong></span>
@@ -631,8 +637,7 @@ function clearOverrides(){overrides[currentDispatch]={};calcDispatch();toast('Aj
 function selectDispatch(did){
   currentDispatch=did;
   // Show Stock Sáb AM upload button only on sat tab
-  const satBtn=document.getElementById('btnLoadSatStock');
-  if(satBtn) satBtn.style.display=did==='sat'?'':'none';
+
   document.querySelectorAll('.d-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('dbtn-'+did).classList.add('active');
   document.getElementById('st-did').textContent=DISPATCH_META[did].label;
